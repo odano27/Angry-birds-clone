@@ -1,13 +1,14 @@
-# Project Name (replace here!)
+Angry Birds - project
 
 This is the template for the projects. Please copy the project description here. 
 You can use Markdown language to render it as formatted **HTML** file.
 
 # Group
-- Member 1
-- Member 2
-- Member 3
-- Member 4
+- Auvo Karvonen
+- Maksim Postnikov
+- Quang Nguyen
+- Allan Cuisin
+- Teo Jansson
 
 # Repository organization
 Your project implementation should follow the skelaton organization in this repository.
