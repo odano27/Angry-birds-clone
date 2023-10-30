@@ -79,3 +79,33 @@ Most of the project plan done, work division and class diagrams etc. still neede
 ### TODOs
 1. Decide about the work divion
 2. Implement diagrams of the project design, class structure etc.
+
+# Follow-up meeting 30.10.2023 20:30
+
+**Participants**: 
+1. Quang
+2. Teo
+3. Auvo
+4. Allan
+5. Maksim
+6. Quang (TA)
+
+## Summary of works
+Listened to the TA's feedback on the draft plan.
+Worked on creating a UML diagram for a clearer high-level structure, which would help in smoother development, per the TA's advice.
+Got some idea of how work could be divided
+
+## Challenges
+Unfamiliar with SFML Implementation
+Still haven't done with work division
+
+## Actions
+1. Continue work division discussion tomorrow in a short meeting, or through messages
+
+## Project status 
+Initial planning is 95% complete
+
+### TODOs
+1. Look at SFML and it's usage
+2. Look into creating a makefile
+3. Start designing specific game mechanics after tomorrow
