@@ -14,6 +14,11 @@ add_executable(${EXECUTABLE_NAME})
 
 target_sources(${EXECUTABLE_NAME} PUBLIC ${SOURCES})
 
+# Add Box2d
+find_library(LIBBOX2D box2d HINTS "libs/box2d/lib" REQUIRED)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC "libs/box2d/include/box2d")
+target_link_libraries(${EXECUTABLE_NAME} ${LIBBOX2D})
+
 # Add SFML
 set(SFML_DIR "libs/SFML-2.6.1/lib/cmake/SFML")
 find_package(SFML 2.6.1 COMPONENTS audio graphics window system REQUIRED)
