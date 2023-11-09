@@ -47,8 +47,8 @@ dkms.conf
 
 # Build folder
 build/
+
 .metals
-.gitignore
 
 # Local configuration
 .vs 
