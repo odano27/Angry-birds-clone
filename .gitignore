@@ -51,5 +51,4 @@ build/
 .metals
 
 # Local configuration
-.vs 
-.vscode
+.vs
