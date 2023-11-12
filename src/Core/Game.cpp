@@ -101,7 +101,7 @@ void Game::CreateTestLevel() {
         {static_cast<float>(size.x), static_cast<float>(size.y)});
     rectShape->setFillColor(sf::Color::Blue);
     auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile("/home/oda/angry-birds-quang-ngo-4/src/Assets/Textures/Keyboard & Mouse textures/Dark/Space_Key_Dark.png")) { //test sprite
+    if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Space_Key_Dark.png")) { //test sprite
       std::cout << "Error loading texture" << std::endl;
     }
     textures.push_back(std::move(texture));
