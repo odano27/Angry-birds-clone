@@ -52,3 +52,4 @@ build/
 
 # Local configuration
 .vs
+.vscode/settings.json

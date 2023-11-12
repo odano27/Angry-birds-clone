@@ -15,10 +15,11 @@ class Renderer {
   Renderer(sf::RenderWindow& window);
 
   void DrawShape(const sf::Shape& shape);
+  void DrawSprite(const sf::Sprite& sprite);
 
   Vector2 ScreenToWorld(const Vector2& screenPosition) const;
   Vector2 WorldToScreen(const Vector2& worldPosition) const;
-
+  Vector2 GetWindowSize() const;
  private:
   sf::RenderWindow& _window;
   Vector2 _windowSize;

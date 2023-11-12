@@ -20,3 +20,7 @@ RenderScope::RenderScope(Renderer& renderer) : _renderer(renderer) {
 }
 
 RenderScope::~RenderScope() { _renderer._window.display(); }
+
+void Renderer::DrawSprite(const sf::Sprite& sprite) { _window.draw(sprite); }
+
+Vector2 Renderer::GetWindowSize() const { return _windowSize; }
