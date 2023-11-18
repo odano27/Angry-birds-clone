@@ -19,10 +19,11 @@ class Entities {
 
     void Draw(Renderer& renderer, double t);
     void ApplyForce(float x, float y, float n); //don't know if this is needed
-    void OnCollision(Entities* other); //called when collision happens
+    virtual void CollideWith(Entities* other); //called when collision happens
     void Update(Renderer& renderer); //called every frame
     void SetTexture(const std::string& filename); 
-    virtual int GetDamage(); 
+    virtual int GetDamage();
+    virtual bool IsBird() const { return false; }
 
     b2Body* GetBody() const;
     bool IsDestroyed() const;

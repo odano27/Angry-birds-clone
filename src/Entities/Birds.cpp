@@ -40,3 +40,7 @@ void Birds::ability(Vector2 mouseLocation) {
 int Birds::GetDamage() {
     return damage*this->GetBody()->GetLinearVelocity().Length();
 }
+
+bool Birds::IsBird() const {
+    return true;
+}

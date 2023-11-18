@@ -3,7 +3,7 @@
 #include <b2_math.h>
 #include <iostream>
 Entities::Entities(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position)
-    : _name(name), _body(body), _texture(texture), _position(position), _prevPosition(position) {
+    : _name(name), _body(body), _texture(texture), _position(position), _prevPosition(position), _scale({1, 1}) {
       _sprite.setTexture(*texture);
       _shape = nullptr;
       hitPoints = 999999999;
@@ -13,20 +13,18 @@ Entities::Entities(const std::string& name, b2Body* body, const sf::Texture* tex
 Entities::Entities(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, const Vector2& scale)
     : _name(name), _body(body), _texture(texture), _position(position), _prevPosition(position), _scale(scale) {
       _sprite.setTexture(*texture);
-      _sprite.setScale(scale.x, scale.y);
       _shape = nullptr;
       hitPoints = 999999999;
       damage = 0;
 }
 
-Entities::Entities(const std::string& name, b2Body* body, sf::Shape* shape,
-                   const Vector2& position)
-    : _name(name), _body(body), _shape(shape) {
-  _position = position;
-  _prevPosition = position;
-  _texture = nullptr;
-  hitPoints = 999999999;
-  damage = 0;
+Entities::Entities(const std::string& name, b2Body* body, sf::Shape* shape, const Vector2& position)
+    : _name(name), _body(body), _shape(shape), _position(position), _prevPosition(position), _scale({1, 1}) {
+      _position = position;
+      _prevPosition = position;
+      _texture = nullptr;
+      hitPoints = 999999999;
+      damage = 0;
 }
 
 Entities::~Entities() {
@@ -41,6 +39,7 @@ void Entities::Draw(Renderer& renderer, double t) {
 
   // _body.GetAngle(). Note that it's in radians
   if (_texture != nullptr){
+  _sprite.setScale(_scale.x, _scale.y);
   auto size = _sprite.getGlobalBounds().getSize();
   _position = center - Vector2{size.x, size.y} / 2;
 
@@ -62,7 +61,7 @@ void Entities::Draw(Renderer& renderer, double t) {
   }
 }
 
-void Entities::OnCollision(Entities* other) {
+void Entities::CollideWith(Entities* other) {
   hitPoints -= other->GetDamage();
   if (hitPoints <= 0) {
     isDestroyed = true;

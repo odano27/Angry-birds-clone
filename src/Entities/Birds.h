@@ -14,8 +14,8 @@ class Birds : public Entities
 public:
     Birds(BirdType type, const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position);
     int GetDamage() override;
-
-    void ability(Vector2 mouseLocation); //shouid be called when mouse is clicked
+    bool IsBird() const override ;
+    void ability(Vector2 mouseLocation); //called when mouse is clicked, get world position of mouse with renderer.ScreenToWorld before calling this function
 
 private:
     BirdType _type;

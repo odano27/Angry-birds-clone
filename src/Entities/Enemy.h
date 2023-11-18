@@ -3,13 +3,26 @@
 
 #include "Entities.h"
 
+enum class EnemyType {
+    Pig,
+    Pig_Mustache,
+    Pig_King,
+};
+
 class Enemy : public Entities 
 {
 public:
-    Enemy();
-    ~Enemy();
+    Enemy(EnemyType type, const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position);
+    void CollideWith(Entities* other) override;
+    int GetDamage() override;
+
+    
 
 private:
+    EnemyType _type;
+    int hitPoints;
+    int damage;
+    int instakillRequirement; //pigs get instakilled when hit with birds with enough damage
 };
 
 #endif // ENEMY_H
