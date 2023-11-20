@@ -24,6 +24,7 @@ class Entities {
     void SetTexture(const std::string& filename); 
     virtual int GetDamage();
     virtual bool IsBird() const { return false; }
+    virtual bool isEnemy() const { return false; } // Default false for entities, enemy overrides to yes. 
 
     b2Body* GetBody() const;
     bool IsDestroyed() const;

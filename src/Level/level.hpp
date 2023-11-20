@@ -7,6 +7,7 @@
 #include "Entities.h"
 #include "Renderer.h"
 #include "leveldata.hpp"
+#include "Physics.h"
 
 class Level {
  public:
@@ -23,12 +24,20 @@ class Level {
 
   const std::vector<Entities*>& GetEntities() const;
 
+  void SwitchToLevel(int levelNumber);
+
  private:
   std::vector<Entities*> entities;
   Birds* activeBird;
-  int enemyCount;
   int score;
   bool levelComplete;
+  int currentLevel;
+
+  void CreateLevel1();
+
+  void CreateLevel2();
+
+  void CreateLevel3();
 };
 
 #endif  // _LEVEL_HPP_

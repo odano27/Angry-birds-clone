@@ -15,10 +15,9 @@ public:
     Enemy(EnemyType type, const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position);
     void CollideWith(Entities* other) override;
     int GetDamage() override;
+    bool isEnemy() const override { return true; } // override to be true, default false
 
-    
-
-private:
+   private:
     EnemyType _type;
     int hitPoints;
     int damage;
