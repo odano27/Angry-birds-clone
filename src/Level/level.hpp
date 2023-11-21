@@ -2,12 +2,19 @@
 #define _LEVEL_HPP_
 
 #include <vector>
-
+#include <iostream>
 #include "Birds.h"
 #include "Entities.h"
+#include "Ground.h"
+#include "Enemy.h"
+#include "Obstacles.h"
 #include "Renderer.h"
 #include "leveldata.hpp"
 #include "Physics.h"
+#include <b2_body.h>
+#include <b2_circle_shape.h>
+#include <b2_fixture.h>
+#include <b2_polygon_shape.h>
 
 class Level {
  public:
