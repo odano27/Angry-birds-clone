@@ -19,6 +19,7 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC "src/include")
 target_include_directories(${EXECUTABLE_NAME} PUBLIC "src/Core")
 target_include_directories(${EXECUTABLE_NAME} PUBLIC "src/Level")
 target_include_directories(${EXECUTABLE_NAME} PUBLIC "src/Entities")
+target_include_directories(${EXECUTABLE_NAME} PUBLIC "src/UI")
 
 # Add Box2d
 find_library(LIBBOX2D box2d HINTS "libs/box2d/lib" REQUIRED)

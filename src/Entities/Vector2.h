@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System.hpp>
 #include <iostream>
 
 struct Vector2 {
@@ -14,6 +15,8 @@ struct Vector2 {
   static Vector2 right() { return {1.0, 0.0}; }
 
   static Vector2 lerp(const Vector2& a, const Vector2& b, double t);
+
+  operator sf::Vector2f() const;
 
   Vector2 operator+(const Vector2& a) const;
   Vector2 operator-(const Vector2& a) const;

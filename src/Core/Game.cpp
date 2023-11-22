@@ -9,11 +9,10 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
+#include <iostream>
 
 #include "DebugDraw.h"
 #include "Entities.h"
-#include <iostream>
-
 
 Game::Game(sf::RenderWindow& window) : _window(window) {
   textures.clear();
@@ -23,6 +22,9 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
 
   DebugDraw* debugDraw = new DebugDraw(*_renderer);
   _physics = new Physics(debugDraw);
+
+  _uiManager = new UIManager();
+  _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
 }
 
 Game::~Game() {
@@ -33,8 +35,8 @@ Game::~Game() {
   delete _input;
   delete _renderer;
   delete _physics;
+  delete _uiManager;
 }
-
 
 void Game::RunLoop() {
   double fixedDeltaTime = 1.0 / 50;
@@ -66,13 +68,14 @@ void Game::RunLoop() {
       double t = accumulated / fixedDeltaTime;
       RenderScope scope(*_renderer);
 
-      //  TODO: Draw UI
-
       // Draw Level
       if (_level != nullptr) _level->Draw(*_renderer, t);
 
       // Draw physics debug overlay
       if (_input->IsKeyPressed(sf::Keyboard::Scan::D)) _physics->DrawDebug();
+
+      // Draw UI
+      _uiManager->Draw(*_renderer);
     }
   }
 }
@@ -101,13 +104,17 @@ void Game::CreateTestLevel() {
         {static_cast<float>(size.x), static_cast<float>(size.y)});
     rectShape->setFillColor(sf::Color::Blue);
     auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Space_Key_Dark.png")) { //test sprite
+    if (!texture->loadFromFile(
+            "src/Assets/Textures/Keyboard & Mouse "
+            "textures/Dark/Space_Key_Dark.png")) {  // test sprite
       std::cout << "Error loading texture" << std::endl;
     }
     textures.push_back(std::move(texture));
     // const sf::Texture& texture = shapeToTexture(*rectShape, size.x, size.y);
 
-    _level->AddEntity(new Entities("Floor", body, textures.back().get(), screenPos, Vector2{6.5, 1.0})); //with scale
+    _level->AddEntity(new Entities("Floor", body, textures.back().get(),
+                                   screenPos,
+                                   Vector2{6.5, 1.0}));  // with scale
   }
   // Add some balls
   {
@@ -136,49 +143,56 @@ void Game::CreateTestLevel() {
       sf::CircleShape* viewShape = new sf::CircleShape(radius);
       viewShape->setFillColor(sf::Color::Green);
 
-      if (i < 2){
-        const sf::Texture& texture = shapeToTexture(*viewShape, radius*2, radius*2);
+      if (i < 2) {
+        const sf::Texture& texture =
+            shapeToTexture(*viewShape, radius * 2, radius * 2);
         _level->AddEntity(new Entities("Ball", body, &texture, screenPos));
       }
 
-      else{
+      else {
         auto texture = std::make_unique<sf::Texture>();
-        if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Space_Key_Dark.png")) { //test sprite
+        if (!texture->loadFromFile(
+                "src/Assets/Textures/Keyboard & Mouse "
+                "textures/Dark/Space_Key_Dark.png")) {  // test sprite
           std::cout << "Error loading texture" << std::endl;
         }
         textures.push_back(std::move(texture));
-        _level->AddEntity(new Entities("Floor", body, textures.back().get(), screenPos, Vector2{1.0, 1.4}));
+        _level->AddEntity(new Entities("Floor", body, textures.back().get(),
+                                       screenPos, Vector2{1.0, 1.4}));
       }
     }
     {
-    const Vector2 size = {100.0, 50};
-    Vector2 screenPos = Vector2{250.0 + radius * 3.5, radius * 2 * 4.5};
-    Vector2 worldPos = _renderer->ScreenToWorld(screenPos + (size / 2));
+      const Vector2 size = {100.0, 50};
+      Vector2 screenPos = Vector2{250.0 + radius * 3.5, radius * 2 * 4.5};
+      Vector2 worldPos = _renderer->ScreenToWorld(screenPos + (size / 2));
 
-    // Create physics
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(worldPos.x, worldPos.y);
-    b2Body* body = _physics->CreateBody(&bodyDef);
+      // Create physics
+      b2BodyDef bodyDef;
+      bodyDef.type = b2_dynamicBody;
+      bodyDef.position.Set(worldPos.x, worldPos.y);
+      b2Body* body = _physics->CreateBody(&bodyDef);
 
-    b2PolygonShape polyShape;
-    polyShape.SetAsBox((size.x / 2.0) / Renderer::PPU,
-                      ((size.y / 2.0) / Renderer::PPU));
-    body->CreateFixture(&polyShape, 0.0f);
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &polyShape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.0f;
-    body->CreateFixture(&fixtureDef);
-    auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Space_Key_Dark.png")) { //test sprite
-      std::cout << "Error loading texture" << std::endl;
+      b2PolygonShape polyShape;
+      polyShape.SetAsBox((size.x / 2.0) / Renderer::PPU,
+                         ((size.y / 2.0) / Renderer::PPU));
+      body->CreateFixture(&polyShape, 0.0f);
+      b2FixtureDef fixtureDef;
+      fixtureDef.shape = &polyShape;
+      fixtureDef.density = 1.0f;
+      fixtureDef.friction = 0.0f;
+      body->CreateFixture(&fixtureDef);
+      auto texture = std::make_unique<sf::Texture>();
+      if (!texture->loadFromFile(
+              "src/Assets/Textures/Keyboard & Mouse "
+              "textures/Dark/Space_Key_Dark.png")) {  // test sprite
+        std::cout << "Error loading texture" << std::endl;
+      }
+      textures.push_back(std::move(texture));
+
+      _level->AddEntity(new Entities("Box", body, textures.back().get(),
+                                     screenPos));  // without scale
     }
-    textures.push_back(std::move(texture));
-
-    _level->AddEntity(new Entities("Box", body, textures.back().get(), screenPos)); //without scale
-    }
-  } 
+  }
 }
 
 void Game::DeleteLevel() {
@@ -189,7 +203,8 @@ void Game::DeleteLevel() {
   }
 }
 
-const sf::Texture& Game::shapeToTexture(const sf::Shape& shape, float sizex, float sizey) {
+const sf::Texture& Game::shapeToTexture(const sf::Shape& shape, float sizex,
+                                        float sizey) {
   auto renderTexture = std::make_unique<sf::RenderTexture>();
 
   renderTexture->create(sizex, sizey);

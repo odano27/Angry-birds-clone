@@ -4,6 +4,10 @@ Vector2 Vector2::lerp(const Vector2& a, const Vector2& b, double t) {
   return a * t + (1.0 - t) * b;
 }
 
+Vector2::operator sf::Vector2f() const {
+  return {static_cast<float>(x), static_cast<float>(y)};
+}
+
 Vector2 Vector2::operator+(const Vector2& a) const {
   return {x + a.x, y + a.y};
 }
