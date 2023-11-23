@@ -1,19 +1,9 @@
 #include "UIButton.h"
 
-#include "UIImageBuilder.h"
-
-UIButton::UIButton(const Vector2& localPosition, float width, float height,
-                   const sf::Color& color, void (*onClick)())
-    : UIElement(localPosition), _onClick(onClick) {
-  AddChild(UIImageBuilder({0.0, 0.0})
-               .WithRect(width, height)
-               .WithColor(color)
-               .Build());
-
-  // TODO: add text child
-}
+UIButton::UIButton(const Vector2& localPosition) : UIElement(localPosition) {}
 
 bool UIButton::TryProcessClick(UIClickEvent&) {
+  if (_onClick == nullptr) return false;
   _onClick();
   return true;
 }

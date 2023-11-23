@@ -1,26 +1,45 @@
 #include "MainMenu.h"
 
-#include "UIButton.h"
+#include "UIButtonBuilder.h"
 #include "UIImageBuilder.h"
-#include "UIText.h"
+#include "UITextBuilder.h"
 
-MainMenu::MainMenu() : UIScreen({10.0f, 10.0f}) {
+MainMenu::MainMenu(AssetLoader& assets) : UIScreen({10.0f, 10.0f}, assets) {
+  const sf::Font& font = _assets.GetFont("Roboto-Black");
+
   // Background
+  float width = 200.0f;
+  float height = 215.0f;
   _root->AddChild(UIImageBuilder({0.0, 0.0})
-                      .WithRect(150.0f, 145.0f)
+                      .WithRect(width, height)
                       .WithColor(sf::Color::Blue)
                       .Build());
 
+  // Title
+  _root->AddChild(UITextBuilder({width / 2.0, 25.0}, "Angry Birds", font, 30)
+                      .WithColor(sf::Color::Red)
+                      .WithOriginAtCenter()
+                      .Build());
+
   // Buttons
-  _root->AddChild(std::make_unique<UIButton>(
-      Vector2{25.0, 25.0}, 100.0f, 25.0f, sf::Color::Red,
-      []() { std::cout << "Click A" << std::endl; }));
+  _root->AddChild(
+      UIButtonBuilder({50.0, 65.0})
+          .WithRect(100.0f, 35.0f)
+          .WithText("Level 1", font)
+          .WithClickHandler([]() { std::cout << "Level 1" << std::endl; })
+          .Build());
 
-  _root->AddChild(std::make_unique<UIButton>(
-      Vector2{25.0, 60.0}, 100.0f, 25.0f, sf::Color::Red,
-      []() { std::cout << "Click B" << std::endl; }));
+  _root->AddChild(
+      UIButtonBuilder({50.0, 110.0})
+          .WithRect(100.0f, 35.0f)
+          .WithText("Level 2", font)
+          .WithClickHandler([]() { std::cout << "Level 2" << std::endl; })
+          .Build());
 
-  _root->AddChild(std::make_unique<UIButton>(
-      Vector2{25.0, 95.0}, 100.0f, 25.0f, sf::Color::Red,
-      []() { std::cout << "Click C" << std::endl; }));
+  _root->AddChild(
+      UIButtonBuilder({50.0, 155.0})
+          .WithRect(100.0f, 35.0f)
+          .WithText("Level 3", font)
+          .WithClickHandler([]() { std::cout << "Level 3" << std::endl; })
+          .Build());
 }

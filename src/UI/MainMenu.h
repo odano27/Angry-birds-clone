@@ -4,5 +4,5 @@
 
 class MainMenu : public UIScreen {
  public:
-  MainMenu();
+  MainMenu(AssetLoader& assets);
 };

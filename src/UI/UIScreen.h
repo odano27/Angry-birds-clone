@@ -1,10 +1,11 @@
 #pragma once
 
+#include "AssetLoader.h"
 #include "UIElement.h"
 
 class UIScreen {
  public:
-  UIScreen(const Vector2& globalPosition);
+  UIScreen(const Vector2& globalPosition, AssetLoader& assets);
   virtual ~UIScreen() {}
 
   void HandleClick(const Vector2& screenPosition);
@@ -12,4 +13,5 @@ class UIScreen {
 
  protected:
   std::unique_ptr<UIElement> _root;
+  AssetLoader& _assets;
 };

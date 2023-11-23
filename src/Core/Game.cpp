@@ -23,7 +23,8 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   DebugDraw* debugDraw = new DebugDraw(*_renderer);
   _physics = new Physics(debugDraw);
 
-  _uiManager = new UIManager();
+  _assets = new AssetLoader();
+  _uiManager = new UIManager(*_assets);
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
 }
 
@@ -36,6 +37,7 @@ Game::~Game() {
   delete _renderer;
   delete _physics;
   delete _uiManager;
+  delete _assets;
 }
 
 void Game::RunLoop() {

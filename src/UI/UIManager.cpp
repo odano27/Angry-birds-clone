@@ -2,9 +2,9 @@
 
 #include "MainMenu.h"
 
-UIManager::UIManager() {
+UIManager::UIManager(AssetLoader& assets) : _assets(assets) {
   // TODO: add screen switching
-  _currentScreen = std::make_unique<MainMenu>();
+  _currentScreen = std::make_unique<MainMenu>(_assets);
 }
 
 void UIManager::Draw(Renderer& renderer) {

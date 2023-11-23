@@ -4,10 +4,13 @@
 
 #include "UIElement.h"
 
+class UIButtonBuilder;
+
 class UIButton : public UIElement {
  public:
-  UIButton(const Vector2& localPosition, float width, float height,
-           const sf::Color& color, void (*onClick)());
+  friend class UIButtonBuilder;
+
+  UIButton(const Vector2& localPosition);
 
  protected:
   bool TryProcessClick(UIClickEvent& event) override;

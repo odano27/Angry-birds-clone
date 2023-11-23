@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#include "AssetLoader.h"
 #include "Input.h"
 #include "Physics.h"
 #include "Renderer.h"
@@ -36,4 +37,5 @@ class Game {
   Renderer* _renderer;
   Level* _level;
   UIManager* _uiManager;
+  AssetLoader* _assets;
 };
