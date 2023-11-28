@@ -6,7 +6,7 @@
 
 class UIButtonBuilder {
  public:
-  UIButtonBuilder(const Vector2& localPosition);
+  UIButtonBuilder(const Vector2& localPosition, bool originAtCenter = false);
 
   UIButtonBuilder& WithRect(float width, float height,
                             const sf::Color& color = sf::Color::White);
@@ -18,6 +18,7 @@ class UIButtonBuilder {
 
  private:
   std::unique_ptr<UIButton> _button;
+  bool _originAtCenter;
   float _width;
   float _height;
 };

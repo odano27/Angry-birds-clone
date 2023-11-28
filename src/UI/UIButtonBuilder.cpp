@@ -1,7 +1,9 @@
 #include "UIButtonBuilder.h"
 
-UIButtonBuilder::UIButtonBuilder(const Vector2& localPosition)
+UIButtonBuilder::UIButtonBuilder(const Vector2& localPosition,
+                                 bool originAtCenter)
     : _button(std::make_unique<UIButton>(localPosition)),
+      _originAtCenter(originAtCenter),
       _width(0),
       _height(0) {}
 
@@ -9,21 +11,24 @@ UIButtonBuilder& UIButtonBuilder::WithRect(float width, float height,
                                            const sf::Color& color) {
   _width = width;
   _height = height;
-  _button->AddChild(UIImageBuilder({0.0, 0.0})
-                        .WithRect(width, height)
-                        .WithColor(color)
-                        .Build());
+
+  UIImageBuilder builder({0.0, 0.0});
+  builder.WithRect(width, height);
+  builder.WithColor(color);
+  if (_originAtCenter) builder.WithOriginAtCenter();
+
+  _button->AddChild(builder.Build());
   return *this;
 }
 
 UIButtonBuilder& UIButtonBuilder::WithText(const std::string& value,
                                            const sf::Font& font, int size,
                                            const sf::Color& color) {
-  _button->AddChild(
-      UITextBuilder({_width / 2.0, _height / 2.0}, value, font, size)
-          .WithColor(color)
-          .WithOriginAtCenter()
-          .Build());
+  UITextBuilder builder({0.0, 0.0}, value, font, size);
+  builder.WithColor(color);
+  if (_originAtCenter) builder.WithOriginAtCenter();
+
+  _button->AddChild(builder.Build());
   return *this;
 }
 
