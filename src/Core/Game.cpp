@@ -26,6 +26,7 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   _assets = new AssetLoader();
   _uiManager = new UIManager(*_assets);
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
+  _uiManager->Show(UIScreenType::MainMenu);
 }
 
 Game::~Game() {

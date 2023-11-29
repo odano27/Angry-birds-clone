@@ -4,5 +4,7 @@
 
 class MainMenu : public UIScreen {
  public:
-  MainMenu(AssetLoader& assets);
+  MainMenu(IUIManager& manager);
+
+  UIScreenType GetType() override;
 };

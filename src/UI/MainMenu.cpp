@@ -4,8 +4,8 @@
 #include "UIImageBuilder.h"
 #include "UITextBuilder.h"
 
-MainMenu::MainMenu(AssetLoader& assets) : UIScreen({10.0f, 10.0f}, assets) {
-  const sf::Font& font = _assets.GetFont("Roboto-Black");
+MainMenu::MainMenu(IUIManager& manager) : UIScreen({10.0f, 10.0f}, manager) {
+  const sf::Font& font = GetAssets().GetFont("Roboto-Black");
 
   // Background
   float width = 200.0f;
@@ -44,3 +44,5 @@ MainMenu::MainMenu(AssetLoader& assets) : UIScreen({10.0f, 10.0f}, assets) {
           .WithClickHandler([]() { std::cout << "Level 3" << std::endl; })
           .Build());
 }
+
+UIScreenType MainMenu::GetType() { return UIScreenType::MainMenu; }
