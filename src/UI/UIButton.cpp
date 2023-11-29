@@ -3,7 +3,7 @@
 UIButton::UIButton(const Vector2& localPosition) : UIElement(localPosition) {}
 
 bool UIButton::TryProcessClick(UIClickEvent&) {
-  if (_onClick == nullptr) return false;
+  if (!_onClick) return false;
   _onClick();
   return true;
 }

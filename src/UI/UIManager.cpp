@@ -1,12 +1,15 @@
 #include "UIManager.h"
 
+#include "HUD.h"
 #include "MainMenu.h"
 
-UIManager::UIManager(AssetLoader& assets) : IUIManager(assets) {}
+UIManager::UIManager(AssetLoader& assets, Vector2 windowSize)
+    : IUIManager(assets, windowSize) {}
 
-void UIManager::Show(UIScreenType screenType) {
-  if (!_screens.empty() && _screens.back()->GetType() == screenType) return;
-  _screens.emplace_back(CreateScreen(screenType));
+UIScreen& UIManager::Show(UIScreenType screenType) {
+  if (_screens.empty() || _screens.back()->GetType() != screenType)
+    _screens.emplace_back(CreateScreen(screenType));
+  return *_screens.back();
 }
 
 void UIManager::Draw(Renderer& renderer) {
@@ -29,6 +32,9 @@ std::unique_ptr<UIScreen> UIManager::CreateScreen(UIScreenType screenType) {
   switch (screenType) {
     case UIScreenType::MainMenu:
       return std::make_unique<MainMenu>(*this);
+
+    case UIScreenType::HUD:
+      return std::make_unique<HUD>(*this);
 
     default:
       return nullptr;

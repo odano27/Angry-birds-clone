@@ -13,3 +13,5 @@ void UIScreen::Draw(Renderer& renderer) { _root->Draw(renderer); }
 void UIScreen::Hide() { _manager.PopScreen(); }
 
 AssetLoader& UIScreen::GetAssets() { return _manager._assets; }
+
+const Vector2& UIScreen::GetWindowSize() { return _manager._windowSize; }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <functional>
 
 #include "UIElement.h"
 
@@ -16,5 +17,5 @@ class UIButton : public UIElement {
   bool TryProcessClick(UIClickEvent& event) override;
 
  private:
-  void (*_onClick)();
+  std::function<void()> _onClick;
 };

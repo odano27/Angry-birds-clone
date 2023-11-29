@@ -26,18 +26,23 @@ class UIScreen {
 
   void Hide();
   AssetLoader& GetAssets();
+  const Vector2& GetWindowSize();
 };
 
 class IUIManager {
  public:
   friend class UIScreen;
 
-  IUIManager(AssetLoader& assets) : _assets(assets){};
+  IUIManager(AssetLoader& assets, Vector2 windowSize)
+      : _assets(assets), _windowSize(windowSize){};
   virtual ~IUIManager() = default;
+
+  virtual UIScreen& Show(UIScreenType screenType) = 0;
 
  protected:
   virtual void PopScreen() = 0;
 
  private:
   AssetLoader& _assets;
+  Vector2 _windowSize;
 };

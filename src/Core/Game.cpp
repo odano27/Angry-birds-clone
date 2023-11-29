@@ -24,7 +24,7 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   _physics = new Physics(debugDraw);
 
   _assets = new AssetLoader();
-  _uiManager = new UIManager(*_assets);
+  _uiManager = new UIManager(*_assets, _renderer->GetWindowSize());
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
   _uiManager->Show(UIScreenType::MainMenu);
 }

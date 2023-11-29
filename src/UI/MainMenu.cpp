@@ -1,5 +1,8 @@
 #include "MainMenu.h"
 
+#include <sstream>
+
+#include "HUD.h"
 #include "UIButtonBuilder.h"
 #include "UIImageBuilder.h"
 #include "UITextBuilder.h"
@@ -23,26 +26,32 @@ MainMenu::MainMenu(IUIManager& manager) : UIScreen({10.0f, 10.0f}, manager) {
                       .Build());
 
   // Buttons
-  _root->AddChild(
-      UIButtonBuilder({hWidth, 85.0}, true)
-          .WithRect(100.0f, 35.0f)
-          .WithText("Level 1", font)
-          .WithClickHandler([]() { std::cout << "Level 1" << std::endl; })
-          .Build());
-
-  _root->AddChild(
-      UIButtonBuilder({hWidth, 130.0}, true)
-          .WithRect(100.0f, 35.0f)
-          .WithText("Level 2", font)
-          .WithClickHandler([]() { std::cout << "Level 2" << std::endl; })
-          .Build());
-
-  _root->AddChild(
-      UIButtonBuilder({hWidth, 175.0}, true)
-          .WithRect(100.0f, 35.0f)
-          .WithText("Level 3", font)
-          .WithClickHandler([]() { std::cout << "Level 3" << std::endl; })
-          .Build());
+  double buttonY = 85.0;
+  for (int i = 0; i < 3; i++) {
+    AddLevelButton(hWidth, buttonY, i, font);
+    buttonY += 45.0;
+  }
 }
 
 UIScreenType MainMenu::GetType() { return UIScreenType::MainMenu; }
+
+void MainMenu::AddLevelButton(double x, double y, int levelIndex,
+                              const sf::Font& font) {
+  std::stringstream label;
+  label << "Level " << levelIndex + 1;
+
+  _root->AddChild(
+      UIButtonBuilder({x, y}, true)
+          .WithRect(100.0f, 35.0f)
+          .WithText(label.str(), font)
+          .WithClickHandler([&, levelIndex]() { StartLevel(levelIndex); })
+          .Build());
+}
+
+void MainMenu::StartLevel(int levelIndex) {
+  Hide();
+
+  // TODO: replace with event
+  HUD& hud = static_cast<HUD&>(_manager.Show(UIScreenType::HUD));
+  hud.SetLevelNumber(levelIndex + 1);
+}

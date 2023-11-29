@@ -5,9 +5,9 @@
 
 class UIManager : public IInputEventHandler, public IUIManager {
  public:
-  UIManager(AssetLoader& assets);
+  UIManager(AssetLoader& assets, Vector2 windowSize);
 
-  void Show(UIScreenType screenType);
+  UIScreen& Show(UIScreenType screenType) override;
   void Draw(Renderer& renderer);
 
   void HandleInputEvent(const sf::Event& event) override;
