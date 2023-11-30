@@ -5,7 +5,7 @@
 
 class UIManager : public IInputEventHandler, public IUIManager {
  public:
-  UIManager(AssetLoader& assets, Vector2 windowSize);
+  UIManager(GameEventBus& eventBus, AssetLoader& assets, Vector2 windowSize);
 
   UIScreen& Show(UIScreenType screenType) override;
   void Draw(Renderer& renderer);

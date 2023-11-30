@@ -2,7 +2,6 @@
 
 #include <sstream>
 
-#include "HUD.h"
 #include "UIButtonBuilder.h"
 #include "UIImageBuilder.h"
 #include "UITextBuilder.h"
@@ -51,7 +50,8 @@ void MainMenu::AddLevelButton(double x, double y, int levelIndex,
 void MainMenu::StartLevel(int levelIndex) {
   Hide();
 
-  // TODO: replace with event
-  HUD& hud = static_cast<HUD&>(_manager.Show(UIScreenType::HUD));
-  hud.SetLevelNumber(levelIndex + 1);
+  GameEvent e;
+  e.type = GameEvent::StartLevel;
+  e.startLevel.index = levelIndex;
+  GetEventBus().Publish(e);
 }

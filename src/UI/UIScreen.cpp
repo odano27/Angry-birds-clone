@@ -14,4 +14,6 @@ void UIScreen::Hide() { _manager.PopScreen(); }
 
 AssetLoader& UIScreen::GetAssets() { return _manager._assets; }
 
+GameEventBus& UIScreen::GetEventBus() { return _manager._eventBus; }
+
 const Vector2& UIScreen::GetWindowSize() { return _manager._windowSize; }

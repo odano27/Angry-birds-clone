@@ -4,13 +4,14 @@
 #include <vector>
 
 #include "AssetLoader.h"
+#include "GameEvent.h"
 #include "Input.h"
 #include "Physics.h"
 #include "Renderer.h"
 #include "UIManager.h"
 #include "level.hpp"
 
-class Game {
+class Game : public IGameEventHandler {
  public:
   Game(sf::RenderWindow& window);
   ~Game();
@@ -21,9 +22,10 @@ class Game {
                      // different class
   void RunLoop();
 
+  void HandleGameEvent(const GameEvent& event) override;
+
  private:
   void CreateTestLevel();
-  void DeleteLevel();
 
   sf::RenderWindow& _window;
   std::vector<std::unique_ptr<sf::Texture>>
@@ -38,4 +40,5 @@ class Game {
   Level* _level;
   UIManager* _uiManager;
   AssetLoader* _assets;
+  GameEventBus* _eventBus;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AssetLoader.h"
+#include "GameEvent.h"
 #include "UIElement.h"
 
 enum class UIScreenType {
@@ -26,6 +27,7 @@ class UIScreen {
 
   void Hide();
   AssetLoader& GetAssets();
+  GameEventBus& GetEventBus();
   const Vector2& GetWindowSize();
 };
 
@@ -33,8 +35,8 @@ class IUIManager {
  public:
   friend class UIScreen;
 
-  IUIManager(AssetLoader& assets, Vector2 windowSize)
-      : _assets(assets), _windowSize(windowSize){};
+  IUIManager(GameEventBus& eventBus, AssetLoader& assets, Vector2 windowSize)
+      : _eventBus(eventBus), _assets(assets), _windowSize(windowSize){};
   virtual ~IUIManager() = default;
 
   virtual UIScreen& Show(UIScreenType screenType) = 0;
@@ -43,6 +45,7 @@ class IUIManager {
   virtual void PopScreen() = 0;
 
  private:
+  GameEventBus& _eventBus;
   AssetLoader& _assets;
   Vector2 _windowSize;
 };

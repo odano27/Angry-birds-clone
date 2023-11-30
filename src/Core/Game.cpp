@@ -13,42 +13,43 @@
 
 #include "DebugDraw.h"
 #include "Entities.h"
+#include "HUD.h"
 
 Game::Game(sf::RenderWindow& window) : _window(window) {
   textures.clear();
   _level = nullptr;
   _input = new Input(window);
   _renderer = new Renderer(window);
+  _eventBus = new GameEventBus();
 
   DebugDraw* debugDraw = new DebugDraw(*_renderer);
   _physics = new Physics(debugDraw);
 
   _assets = new AssetLoader();
-  _uiManager = new UIManager(*_assets, _renderer->GetWindowSize());
+  _uiManager = new UIManager(*_eventBus, *_assets, _renderer->GetWindowSize());
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
+
+  _eventBus->AddEventHandler(GameEvent::StartLevel, this);
+  _eventBus->AddEventHandler(GameEvent::DestroyBody, _physics);
+
   _uiManager->Show(UIScreenType::MainMenu);
 }
 
 Game::~Game() {
-  // TODO: refactor later, this is just for test
-  DeleteLevel();
-
   delete _level;
   delete _input;
   delete _renderer;
   delete _physics;
   delete _uiManager;
   delete _assets;
+  delete _eventBus;
 }
 
 void Game::RunLoop() {
   double fixedDeltaTime = 1.0 / 50;
   double maxDeltaTime = 1.0 / 3.0;
 
-  // TODO: remove later, this is just for test
-  //CreateTestLevel();
-
-  _level = new Level;
+  _level = new Level(*_eventBus);
   _level->CreateLevel1(*_renderer, *_physics);
 
   sf::Clock clock;
@@ -61,6 +62,9 @@ void Game::RunLoop() {
 
     // Process Input
     _input->ProcessEvents();
+
+    // Process Game Events
+    _eventBus->ProcessEvents();
 
     while (accumulated >= fixedDeltaTime) {
       // Update Physics
@@ -86,8 +90,15 @@ void Game::RunLoop() {
   }
 }
 
+void Game::HandleGameEvent(const GameEvent& event) {
+  if (event.type == GameEvent::StartLevel) {
+    HUD& hud = static_cast<HUD&>(_uiManager->Show(UIScreenType::HUD));
+    hud.SetLevelNumber(event.startLevel.index + 1);
+  }
+}
+
 void Game::CreateTestLevel() {
-  _level = new Level();
+  _level = new Level(*_eventBus);
 
   // Add floor entity (static)
   {
@@ -198,14 +209,6 @@ void Game::CreateTestLevel() {
       _level->AddEntity(new Entities("Box", body, textures.back().get(),
                                      screenPos));  // without scale
     }
-  }
-}
-
-void Game::DeleteLevel() {
-  if (_level == nullptr) return;
-
-  for (const Entities* entity : _level->GetEntities()) {
-    _physics->DestroyBody(entity->GetBody());
   }
 }
 

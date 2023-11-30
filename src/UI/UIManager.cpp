@@ -3,8 +3,9 @@
 #include "HUD.h"
 #include "MainMenu.h"
 
-UIManager::UIManager(AssetLoader& assets, Vector2 windowSize)
-    : IUIManager(assets, windowSize) {}
+UIManager::UIManager(GameEventBus& eventBus, AssetLoader& assets,
+                     Vector2 windowSize)
+    : IUIManager(eventBus, assets, windowSize) {}
 
 UIScreen& UIManager::Show(UIScreenType screenType) {
   if (_screens.empty() || _screens.back()->GetType() != screenType)

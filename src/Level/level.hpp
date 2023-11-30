@@ -1,24 +1,26 @@
 #ifndef _LEVEL_HPP_
 #define _LEVEL_HPP_
 
-#include <vector>
-#include <iostream>
-#include "Birds.h"
-#include "Entities.h"
-#include "Ground.h"
-#include "Enemy.h"
-#include "Obstacles.h"
-#include "Renderer.h"
-#include "leveldata.hpp"
-#include "Physics.h"
 #include <b2_body.h>
 #include <b2_circle_shape.h>
 #include <b2_fixture.h>
 #include <b2_polygon_shape.h>
 
+#include <iostream>
+#include <vector>
+
+#include "Birds.h"
+#include "Enemy.h"
+#include "Entities.h"
+#include "Ground.h"
+#include "Obstacles.h"
+#include "Physics.h"
+#include "Renderer.h"
+#include "leveldata.hpp"
+
 class Level {
  public:
-  Level();
+  Level(GameEventBus& eventBus);
   ~Level();
 
   void loadLevel(LevelData& data);
@@ -29,20 +31,17 @@ class Level {
 
   void AddEntity(Entities* entity);
 
-  const std::vector<Entities*>& GetEntities() const;
-
   void SwitchToLevel(int levelNumber);
 
   void CreateLevel1(Renderer& renderer, Physics& physics);
 
  private:
+  GameEventBus& _eventBus;
   std::vector<Entities*> entities;
   Birds* activeBird;
   int score;
   bool levelComplete;
   int currentLevel;
-
-  
 
   void CreateLevel2(Renderer& renderer, Physics& physics);
 
