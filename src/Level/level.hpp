@@ -33,6 +33,8 @@ class Level {
 
   void SwitchToLevel(int levelNumber);
 
+  void CreateLevel1(Renderer& renderer, Physics& physics);
+
  private:
   std::vector<Entities*> entities;
   Birds* activeBird;
@@ -40,11 +42,11 @@ class Level {
   bool levelComplete;
   int currentLevel;
 
-  void CreateLevel1();
+  
 
-  void CreateLevel2();
+  void CreateLevel2(Renderer& renderer, Physics& physics);
 
-  void CreateLevel3();
+  void CreateLevel3(Renderer& renderer, Physics& physics);
 };
 
 #endif  // _LEVEL_HPP_

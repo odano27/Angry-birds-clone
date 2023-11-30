@@ -46,7 +46,10 @@ void Game::RunLoop() {
   double maxDeltaTime = 1.0 / 3.0;
 
   // TODO: remove later, this is just for test
-  CreateTestLevel();
+  //CreateTestLevel();
+
+  _level = new Level;
+  _level->CreateLevel1(*_renderer, *_physics);
 
   sf::Clock clock;
   double accumulated = 0.0;

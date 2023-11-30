@@ -55,8 +55,8 @@ const std::vector<Entities*>& Level::GetEntities() const { return entities; }
     CreateLevel3();
   } 
 }*/
-/*
-static void CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 2 red birds, one enemy on a plank (picture in plan folder)
+
+void Level::CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 2 red birds, one enemy on a plank (picture in plan folder) 
   
   {//GROUND
   //ground fill the entire bottom of the window
@@ -78,10 +78,10 @@ static void CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 
         {static_cast<float>(size.x), static_cast<float>(size.y)});
   rectShape->setFillColor(sf::Color::Blue);
   auto texture = std::make_unique<sf::Texture>();
-  if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/grass.png")) { //test sprite
+  if (!texture->loadFromFile("src/Assets/Textures/Grass.png")) { //test sprite
     std::cout << "Error loading texture" << std::endl;
   }
-  AddEntity(new Ground("Ground",groundBody,texture,screenPos,Vector2{1.0,1.0}));
+  AddEntity(new Ground("Ground", groundBody, texture.get(), screenPos, Vector2{1.0, 1.0}));
 
   }
   {//BIRDS
@@ -112,10 +112,10 @@ static void CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 
 
     //load textures
       auto texture = std::make_unique<sf::Texture>();
-      if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Red.png")) { //test sprite
+      if (!texture->loadFromFile("src/Assets/Textures/Red.png")) { //test sprite
         std::cout << "Error loading texture" << std::endl;
       }
-      AddEntity(new Birds(BirdType::Red,"Red", birdBody, texture, screenPos));
+      AddEntity(new Birds(BirdType::Red, "Red", birdBody, texture.get(), screenPos));
     }
   }
   
@@ -146,10 +146,10 @@ static void CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 
 
     //load textures
     auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Pig.png")) { //test sprite
+    if (!texture->loadFromFile("src/Assets/Textures/Pig.png")) { //test sprite
       std::cout << "Error loading texture" << std::endl;
     }
-    AddEntity(new Enemy(EnemyType::Pig,"Pig", enemyBody, texture, screenPos));
+    AddEntity(new Enemy(EnemyType::Pig,"Pig", enemyBody, texture.get(), screenPos));
   }
 //Add plank
   {
@@ -179,16 +179,207 @@ static void CreateLevel1(Renderer& renderer, Physics& physics) {  // Level with 
 
     //load textures
     auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile("src/Assets/Textures/Keyboard & Mouse textures/Dark/Plank.png")) { //test sprite
+    if (!texture->loadFromFile("src/Assets/Textures/Plank.png")) { //test sprite
       std::cout << "Error loading texture" << std::endl;
     }
-    AddEntity(new Obstacles("Plank", plankBody, texture, screenPos));
+    AddEntity(new Obstacles("Plank", plankBody, texture.get(), screenPos));
   }
 
 }
-*/
-// Level with 2 red and 2 yellow birds, 2 enemies, one inside plank house (picture in plan folder)
-//void CreateLevel2();
 
+/* // Level with 2 red and 2 yellow birds, 2 enemies, one inside plank house (picture in plan folder)
+void Level::CreateLevel2(Renderer& renderer, Physics& physics) {
+
+  {//GROUND
+  //ground fill the entire bottom of the window
+  const Vector2 size = {renderer.GetWindowSize().x, renderer.GetWindowSize().y/12.0};
+  Vector2 screenPos = Vector2{renderer.GetWindowSize().y/12.0, renderer.GetWindowSize().x/2.0};
+  Vector2 worldPos = renderer.ScreenToWorld(screenPos + (size / 2));
+  //creating the ground in b2d
+  b2BodyDef bodyDef;
+  bodyDef.position.Set(worldPos.x,worldPos.y);
+  b2Body* groundBody = physics.CreateBody(&bodyDef);
+  b2PolygonShape groundShape;
+  groundShape.SetAsBox((size.x/2.0)/Renderer::PPU,
+                      ((size.y/2.0)/Renderer::PPU));
+  groundBody->CreateFixture(&groundShape, 0.0f);
+
+  
+  //create ground view in SFML
+  sf::RectangleShape* rectShape = new sf::RectangleShape(
+        {static_cast<float>(size.x), static_cast<float>(size.y)});
+  rectShape->setFillColor(sf::Color::Blue);
+  auto texture = std::make_unique<sf::Texture>();
+  if (!texture->loadFromFile("src/Assets/Textures/Grass.png")) { //test sprite
+    std::cout << "Error loading texture" << std::endl;
+  }
+  AddEntity(new Ground("Ground", groundBody, texture.get(), screenPos, Vector2{1.0, 1.0}));
+
+  }
+
+  //Birds
+  {// Add two red birds
+  for (int i = 0; i < 2; i++) {
+    //Create physics body and position for each bird                                  !!TODO implement physics and pos
+
+    //Create the birds                                                                 !!TODO ADD physics, texture, position
+    AddEntity(new Birds(BirdType::Red, "Red", birdBody, texture.get(), screenPos));
+  }
+
+  // Add two yellow birds
+  for (int i = 0; i < 2; i++) {
+    //Create physics body and position for each bird                                  !!TODO implement physics and pos
+
+    //Create the birds                                                                !!TODO ADD physics, texture, position
+    AddEntity(new Birds(BirdType::Yellow, "Yellow", birdBody, texture.get(), screenPos));
+  }
+  }
+  
+  //Enemies
+  {
+  //Add enemy 1
+  { 
+    //Create physics and position                                                    !!TODO Add physics
+
+    //Crete the enemy
+    AddEntity(new Enemy(EnemyType::Pig, "Pig1", body, texture, position));
+  }
+
+  //Add enemy 2
+  { 
+    //Create physics and position                                                    !!TODO Add physics
+
+    //Crete the enemy
+    AddEntity(new Enemy(EnemyType::Pig, "Pig2", body, texture, position));
+  }
+  }
+
+  //Add plank
+  {
+   //Create position for plank 
+  
+   // Create plank physic body & fixture
+
+   // Create plank view
+
+   //load textures
+    auto texture = std::make_unique<sf::Texture>();
+    if (!texture->loadFromFile("src/Assets/Textures/Plank.png")) { //test sprite
+      std::cout << "Error loading texture" << std::endl;
+    }
+
+    AddEntity(new Obstacles("Plank", plankBody, texture.get(), screenPos));
+  }
+}
+*/
+
+/*
 // Level with 2red, 2 yellow and 1 big red birds, 2 enemies, both inside plank houses (picture in plan folder)
-//void CreateLevel3();
+void Level::CreateLevel3(Renderer& renderer, Physics& physics) {
+
+  {//GROUND
+  //ground fill the entire bottom of the window
+  const Vector2 size = {renderer.GetWindowSize().x, renderer.GetWindowSize().y/12.0};
+  Vector2 screenPos = Vector2{renderer.GetWindowSize().y/12.0, renderer.GetWindowSize().x/2.0};
+  Vector2 worldPos = renderer.ScreenToWorld(screenPos + (size / 2));
+  //creating the ground in b2d
+  b2BodyDef bodyDef;
+  bodyDef.position.Set(worldPos.x,worldPos.y);
+  b2Body* groundBody = physics.CreateBody(&bodyDef);
+  b2PolygonShape groundShape;
+  groundShape.SetAsBox((size.x/2.0)/Renderer::PPU,
+                      ((size.y/2.0)/Renderer::PPU));
+  groundBody->CreateFixture(&groundShape, 0.0f);
+
+  
+  //create ground view in SFML
+  sf::RectangleShape* rectShape = new sf::RectangleShape(
+        {static_cast<float>(size.x), static_cast<float>(size.y)});
+  rectShape->setFillColor(sf::Color::Blue);
+  auto texture = std::make_unique<sf::Texture>();
+  if (!texture->loadFromFile("src/Assets/Textures/Grass.png")) { //test sprite
+    std::cout << "Error loading texture" << std::endl;
+  }
+  AddEntity(new Ground("Ground", groundBody, texture.get(), screenPos, Vector2{1.0, 1.0}));
+
+  }
+
+  //Birds
+  {// Add two red birds
+  for (int i = 0; i < 2; i++) {
+    //Create physics body and position for each bird                                  !!TODO implement physics and pos
+
+    //Create the birds
+    //Birds* redBird = new Birds(BirdType::Red, "Red", body, texture, position);      !!TODO ADD physics, texture, position
+    AddEntity(new Birds(BirdType::Red, "Red", birdBody, texture.get(), screenPos));
+  }
+
+  // Add two yellow birds
+  for (int i = 0; i < 2; i++) {
+    //Create physics body and position for each bird                                  !!TODO implement physics and pos
+
+    //Create the birds                                                                !!TODO ADD physics, texture, position
+    AddEntity(new Birds(BirdType::Yellow, "Yellow", birdBody, texture.get(), screenPos));
+  }
+  // Add big red bird
+    //Create physics body and position for each bird                                  !!TODO implement physics and pos
+
+    //Create the birds                                                                !!TODO ADD physics, texture, position
+    AddEntity(new Birds(BirdType::Yellow, "Yellow", birdBody, texture.get(), screenPos));
+  }
+  
+  //Enemies
+  {
+  //Add enemy 1
+  { 
+    //Create physics and position                                                    !!TODO Add physics
+
+    //Crete the enemy
+    AddEntity(new Enemy(EnemyType::Pig, "Pig1", body, texture, position));
+  }
+
+  //Add enemy 2
+  { 
+    //Create physics and position                                                    !!TODO Add physics
+
+    //Crete the enemy
+    AddEntity(new Enemy(EnemyType::Pig, "Pig2", body, texture, position));
+  }
+  }
+
+  //Add plank 1
+  {
+   //Create position for plank 
+  
+   // Create plank physic body & fixture
+
+   // Create plank view
+
+   //load textures
+    auto texture = std::make_unique<sf::Texture>();
+    if (!texture->loadFromFile("src/Assets/Textures/Plank.png")) { //test sprite
+      std::cout << "Error loading texture" << std::endl;
+    }
+
+    AddEntity(new Obstacles("Plank", plankBody, texture.get(), screenPos));
+  }
+
+  //Add plank 2
+  {
+   //Create position for plank 
+  
+   // Create plank physic body & fixture
+
+   // Create plank view
+
+   //load textures
+    auto texture = std::make_unique<sf::Texture>();
+    if (!texture->loadFromFile("src/Assets/Textures/Plank.png")) { //test sprite
+      std::cout << "Error loading texture" << std::endl;
+    }
+
+    AddEntity(new Obstacles("Plank", plankBody, texture.get(), screenPos));
+  }
+}
+
+*/
