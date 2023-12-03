@@ -6,7 +6,7 @@
 #include "UIImageBuilder.h"
 #include "UITextBuilder.h"
 
-MainMenu::MainMenu(IUIManager& manager) : UIScreen({10.0f, 10.0f}, manager) {
+MainMenu::MainMenu(IUIManager& manager) : UIScreen({300.0f, 190.0f}, manager) {
   const sf::Font& font = GetAssets().GetFont("Roboto-Black");
 
   // Background

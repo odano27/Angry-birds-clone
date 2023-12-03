@@ -12,6 +12,14 @@ Vector2 Vector2::operator+(const Vector2& a) const {
   return {x + a.x, y + a.y};
 }
 
+Vector2 Vector2::operator+(const sf::Vector2f& a) const {
+  return {x + a.x, y + a.y};
+}
+
+Vector2 Vector2::operator-(const sf::Vector2f& a) const {
+  return {x - a.x, y - a.y};
+}
+
 Vector2 Vector2::operator-(const Vector2& a) const {
   return {x - a.x, y - a.y};
 }

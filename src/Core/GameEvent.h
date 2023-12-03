@@ -11,20 +11,16 @@ class GameEvent {
     int index;
   };
 
-  struct DestroyBodyEvent {
-    b2Body* body;
-  };
-
   enum EventType {
     StartLevel,
-    DestroyBody,
+    RestartLevel,
+    BackToMenu,
   };
 
   EventType type;
 
   union {
     StartLevelEvent startLevel;
-    DestroyBodyEvent destroyBody;
   };
 };
 

@@ -19,7 +19,9 @@ struct Vector2 {
   operator sf::Vector2f() const;
 
   Vector2 operator+(const Vector2& a) const;
+  Vector2 operator+(const sf::Vector2f& a) const;
   Vector2 operator-(const Vector2& a) const;
+  Vector2 operator-(const sf::Vector2f& a) const;
   Vector2 operator-(float a) const;
   Vector2 operator/(int a) const;
 

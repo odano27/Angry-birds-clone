@@ -1,12 +1,5 @@
 #include "Game.h"
 
-#include <b2_body.h>
-#include <b2_circle_shape.h>
-#include <b2_fixture.h>
-#include <b2_polygon_shape.h>
-
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <iostream>
@@ -16,7 +9,6 @@
 #include "HUD.h"
 
 Game::Game(sf::RenderWindow& window) : _window(window) {
-  textures.clear();
   _level = nullptr;
   _input = new Input(window);
   _renderer = new Renderer(window);
@@ -30,7 +22,8 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
 
   _eventBus->AddEventHandler(GameEvent::StartLevel, this);
-  _eventBus->AddEventHandler(GameEvent::DestroyBody, _physics);
+  _eventBus->AddEventHandler(GameEvent::RestartLevel, this);
+  _eventBus->AddEventHandler(GameEvent::BackToMenu, this);
 
   _uiManager->Show(UIScreenType::MainMenu);
 }
@@ -48,9 +41,6 @@ Game::~Game() {
 void Game::RunLoop() {
   double fixedDeltaTime = 1.0 / 50;
   double maxDeltaTime = 1.0 / 3.0;
-
-  _level = new Level(*_eventBus);
-  _level->CreateLevel1(*_renderer, *_physics);
 
   sf::Clock clock;
   double accumulated = 0.0;
@@ -92,137 +82,19 @@ void Game::RunLoop() {
 
 void Game::HandleGameEvent(const GameEvent& event) {
   if (event.type == GameEvent::StartLevel) {
+    int levelIndex = event.startLevel.index;
+
     HUD& hud = static_cast<HUD&>(_uiManager->Show(UIScreenType::HUD));
-    hud.SetLevelNumber(event.startLevel.index + 1);
+    hud.SetLevelNumber(levelIndex + 1);
+
+    _level = new Level(*_physics, *_eventBus, *_assets);
+    _level->CerateLevel(levelIndex, *_renderer);
+  } else if (event.type == GameEvent::RestartLevel) {
+    _level->RestartLevel(*_renderer);
+  } else if (event.type == GameEvent::BackToMenu) {
+    _uiManager->Show(UIScreenType::MainMenu);
+
+    delete _level;
+    _level = nullptr;
   }
-}
-
-void Game::CreateTestLevel() {
-  _level = new Level(*_eventBus);
-
-  // Add floor entity (static)
-  {
-    const Vector2 size = {600.0, 50.0};
-    Vector2 screenPos = Vector2{100.0, 500.0};
-    Vector2 worldPos = _renderer->ScreenToWorld(screenPos + (size / 2));
-
-    // Create physics
-    b2BodyDef bodyDef;
-    bodyDef.position.Set(worldPos.x, worldPos.y);
-    b2Body* body = _physics->CreateBody(&bodyDef);
-
-    b2PolygonShape polyShape;
-    polyShape.SetAsBox((size.x / 2.0) / Renderer::PPU,
-                       ((size.y / 2.0) / Renderer::PPU));
-    body->CreateFixture(&polyShape, 0.0f);
-
-    // Create view
-    sf::RectangleShape* rectShape = new sf::RectangleShape(
-        {static_cast<float>(size.x), static_cast<float>(size.y)});
-    rectShape->setFillColor(sf::Color::Blue);
-    auto texture = std::make_unique<sf::Texture>();
-    if (!texture->loadFromFile(
-            "src/Assets/Textures/Keyboard & Mouse "
-            "textures/Dark/Space_Key_Dark.png")) {  // test sprite
-      std::cout << "Error loading texture" << std::endl;
-    }
-    textures.push_back(std::move(texture));
-    // const sf::Texture& texture = shapeToTexture(*rectShape, size.x, size.y);
-
-    _level->AddEntity(new Entities("Floor", body, textures.back().get(),
-                                   screenPos,
-                                   Vector2{6.5, 1.0}));  // with scale
-  }
-  // Add some balls
-  {
-    const double radius = 50.0;
-
-    for (int i = 0; i < 3; i++) {
-      Vector2 screenPos = Vector2{250.0 + radius * i, radius * 2 * i};
-      Vector2 worldPos = _renderer->ScreenToWorld(screenPos + radius);
-
-      // Create physics
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position.Set(worldPos.x, worldPos.y);
-      b2Body* body = _physics->CreateBody(&bodyDef);
-
-      b2CircleShape physShape;
-      physShape.m_radius = radius / Renderer::PPU;
-
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &physShape;
-      fixtureDef.density = 1.0f;
-      fixtureDef.friction = 0.3f;
-      body->CreateFixture(&fixtureDef);
-
-      // Create view
-      sf::CircleShape* viewShape = new sf::CircleShape(radius);
-      viewShape->setFillColor(sf::Color::Green);
-
-      if (i < 2) {
-        const sf::Texture& texture =
-            shapeToTexture(*viewShape, radius * 2, radius * 2);
-        _level->AddEntity(new Entities("Ball", body, &texture, screenPos));
-      }
-
-      else {
-        auto texture = std::make_unique<sf::Texture>();
-        if (!texture->loadFromFile(
-                "src/Assets/Textures/Keyboard & Mouse "
-                "textures/Dark/Space_Key_Dark.png")) {  // test sprite
-          std::cout << "Error loading texture" << std::endl;
-        }
-        textures.push_back(std::move(texture));
-        _level->AddEntity(new Entities("Floor", body, textures.back().get(),
-                                       screenPos, Vector2{1.0, 1.4}));
-      }
-    }
-    {
-      const Vector2 size = {100.0, 50};
-      Vector2 screenPos = Vector2{250.0 + radius * 3.5, radius * 2 * 4.5};
-      Vector2 worldPos = _renderer->ScreenToWorld(screenPos + (size / 2));
-
-      // Create physics
-      b2BodyDef bodyDef;
-      bodyDef.type = b2_dynamicBody;
-      bodyDef.position.Set(worldPos.x, worldPos.y);
-      b2Body* body = _physics->CreateBody(&bodyDef);
-
-      b2PolygonShape polyShape;
-      polyShape.SetAsBox((size.x / 2.0) / Renderer::PPU,
-                         ((size.y / 2.0) / Renderer::PPU));
-      body->CreateFixture(&polyShape, 0.0f);
-      b2FixtureDef fixtureDef;
-      fixtureDef.shape = &polyShape;
-      fixtureDef.density = 1.0f;
-      fixtureDef.friction = 0.0f;
-      body->CreateFixture(&fixtureDef);
-      auto texture = std::make_unique<sf::Texture>();
-      if (!texture->loadFromFile(
-              "src/Assets/Textures/Keyboard & Mouse "
-              "textures/Dark/Space_Key_Dark.png")) {  // test sprite
-        std::cout << "Error loading texture" << std::endl;
-      }
-      textures.push_back(std::move(texture));
-
-      _level->AddEntity(new Entities("Box", body, textures.back().get(),
-                                     screenPos));  // without scale
-    }
-  }
-}
-
-const sf::Texture& Game::shapeToTexture(const sf::Shape& shape, float sizex,
-                                        float sizey) {
-  auto renderTexture = std::make_unique<sf::RenderTexture>();
-
-  renderTexture->create(sizex, sizey);
-  renderTexture->setSmooth(true);
-  renderTexture->clear(sf::Color::Transparent);
-  renderTexture->draw(shape);
-  renderTexture->display();
-
-  renderTextures.push_back(std::move(renderTexture));
-
-  return renderTextures.back()->getTexture();
 }

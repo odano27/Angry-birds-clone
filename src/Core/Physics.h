@@ -3,9 +3,8 @@
 #include <b2_world.h>
 
 #include "DebugDraw.h"
-#include "GameEvent.h"
 
-class Physics : public IGameEventHandler {
+class Physics {
  public:
   Physics(DebugDraw* debugDraw);
   ~Physics();
@@ -14,12 +13,9 @@ class Physics : public IGameEventHandler {
   void DrawDebug();
 
   b2Body* CreateBody(const b2BodyDef* bodyDef);
-
-  void HandleGameEvent(const GameEvent& event) override;
+  void DestroyBody(b2Body* body);
 
  private:
   b2World* _world;
   DebugDraw* _debugDraw;
-
-  void DestroyBody(b2Body* body);
 };

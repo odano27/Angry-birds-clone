@@ -26,10 +26,4 @@ b2Body* Physics::CreateBody(const b2BodyDef* bodyDef) {
   return _world->CreateBody(bodyDef);
 }
 
-void Physics::HandleGameEvent(const GameEvent& event) {
-  if (event.type == GameEvent::DestroyBody) {
-    DestroyBody(event.destroyBody.body);
-  }
-}
-
 void Physics::DestroyBody(b2Body* body) { _world->DestroyBody(body); }

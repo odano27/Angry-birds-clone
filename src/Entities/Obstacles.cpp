@@ -1,21 +1,48 @@
 #include "Obstacles.h"
 
-Obstacles::Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, const Vector2& scale, int hitPoints, int damage)
-    : Entities(name, body, texture, position, scale), _hitPoints(hitPoints), _damage(damage) {
-}
+#include <b2_fixture.h>
+#include <b2_polygon_shape.h>
 
-Obstacles::Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, int hitPoints, int damage)
-    : Entities(name, body, texture, position), _hitPoints(hitPoints), _damage(damage) {
-}
+Obstacles::Obstacles(ObstacleType type, const Vector2& screenPos,
+                     Renderer& renderer, Physics& physics, AssetLoader& assets)
+    : Entities("Obstacle") {
+  _hitPoints = 50;
+  _damage = 5;
 
-Obstacles::Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, int hitPoints)
-    : Entities(name, body, texture, position), _hitPoints(hitPoints), _damage(15) {
-}
+  Vector2 size;
+  std::string textureName;
+  switch (type) {
+    case ObstacleType::Plank_ver:
+      size = {35.0, 110.0};
+      textureName = "Plank";
+      break;
 
-Obstacles::Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position)
-    : Entities(name, body, texture, position), _hitPoints(50), _damage(15) {
-}
+    case ObstacleType::Plank_hor:
+      size = {110.0, 35.0};
+      textureName = "Plank_h";
+      break;
+  }
 
-int Obstacles::GetDamage() {
-    return _damage;
+  Vector2 worldPos = renderer.ScreenToWorld(screenPos + size / 2);
+
+  b2BodyDef bodyDef;
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position.Set(worldPos.x, worldPos.y);
+
+  b2PolygonShape shape;
+  shape.SetAsBox((size.x / 2.0) / Renderer::PPU,
+                 ((size.y / 2.0) / Renderer::PPU));
+
+  b2FixtureDef fixtureDef;
+  fixtureDef.shape = &shape;
+  fixtureDef.density = 1.0f;
+  fixtureDef.friction = 0.7f;
+
+  b2Body* body = physics.CreateBody(&bodyDef);
+  body->CreateFixture(&fixtureDef);
+  SetBody(body);
+
+  const sf::Texture& texture = assets.GetTexture(textureName);
+  sf::Vector2u textureSize = texture.getSize();
+  SetTexture(texture, {size.x / textureSize.x, size.y / textureSize.y});
 }

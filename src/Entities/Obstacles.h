@@ -1,22 +1,18 @@
 #ifndef __OBSTACLES_H__
 #define __OBSTACLES_H__
 
+#include "AssetLoader.h"
 #include "Entities.h"
 
-class Obstacles : public Entities
-{
-public:
-    Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, const Vector2& scale, int hitPoints, int damage);
-    Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, int hitPoints, int damage);
-    Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, int hitPoints);
-    Obstacles(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position);
-
-    int GetDamage() override;
-
-private:
-    int _hitPoints;
-    int _damage;
-    
+enum class ObstacleType {
+  Plank_ver,
+  Plank_hor,
 };
 
-#endif // __OBSTACLES_H__
+class Obstacles : public Entities {
+ public:
+  Obstacles(ObstacleType type, const Vector2& screenPos, Renderer& renderer,
+            Physics& physics, AssetLoader& assets);
+};
+
+#endif  // __OBSTACLES_H__

@@ -9,4 +9,8 @@ class HUD : public UIScreen {
   UIScreenType GetType() override;
 
   void SetLevelNumber(int levelNumber);
+
+ private:
+  void RestartLevel();
+  void BackToMenu();
 };

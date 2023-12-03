@@ -1,26 +1,15 @@
 #ifndef _LEVEL_HPP_
 #define _LEVEL_HPP_
 
-#include <b2_body.h>
-#include <b2_circle_shape.h>
-#include <b2_fixture.h>
-#include <b2_polygon_shape.h>
-
-#include <iostream>
 #include <vector>
 
 #include "Birds.h"
-#include "Enemy.h"
-#include "Entities.h"
-#include "Ground.h"
-#include "Obstacles.h"
-#include "Physics.h"
-#include "Renderer.h"
+#include "GameEvent.h"
 #include "leveldata.hpp"
 
 class Level {
  public:
-  Level(GameEventBus& eventBus);
+  Level(Physics& physics, GameEventBus& eventBus, AssetLoader& assets);
   ~Level();
 
   void loadLevel(LevelData& data);
@@ -29,23 +18,26 @@ class Level {
 
   void Draw(Renderer& renderer, double t);
 
-  void AddEntity(Entities* entity);
-
-  void SwitchToLevel(int levelNumber);
-
-  void CreateLevel1(Renderer& renderer, Physics& physics);
+  void CerateLevel(int levelIndex, Renderer& renderer);
+  void RestartLevel(Renderer& renderer);
 
  private:
+  Physics& _physics;
   GameEventBus& _eventBus;
-  std::vector<Entities*> entities;
-  Birds* activeBird;
+  AssetLoader& _assets;
+
+  std::vector<std::unique_ptr<Entities>> _entities;
+  std::unique_ptr<Birds> _activeBird;
+
   int score;
   bool levelComplete;
-  int currentLevel;
+  int _levelIndex;
 
-  void CreateLevel2(Renderer& renderer, Physics& physics);
+  void CreateLevel1(Renderer& renderer);
+  void CreateLevel2(Renderer& renderer);
+  void CreateLevel3(Renderer& renderer);
 
-  void CreateLevel3(Renderer& renderer, Physics& physics);
+  void AddEntity(Entities*&& entity);
 };
 
 #endif  // _LEVEL_HPP_

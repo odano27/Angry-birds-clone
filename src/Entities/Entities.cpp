@@ -1,97 +1,105 @@
 #include "Entities.h"
 
-#include <b2_math.h>
-#include <iostream>
-Entities::Entities(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position)
-    : _name(name), _body(body), _texture(texture), _position(position), _prevPosition(position), _scale({1, 1}) {
-      _sprite.setTexture(*texture);
-      _shape = nullptr;
-      hitPoints = 999999999;
-      damage = 0;
+#include <cmath>
+
+Entities::Entities(const std::string& name) : _name(name) {
+  _body = nullptr;
+  _shape = nullptr;
+  _sprite = nullptr;
+
+  _position = Vector2::zero();
+  _prevPosition = Vector2::zero();
+
+  _hitPoints = 999999999;
+  _damage = 0;
+  _isDestroyed = false;
 }
 
-Entities::Entities(const std::string& name, b2Body* body, const sf::Texture* texture, const Vector2& position, const Vector2& scale)
-    : _name(name), _body(body), _texture(texture), _position(position), _prevPosition(position), _scale(scale) {
-      _sprite.setTexture(*texture);
-      _shape = nullptr;
-      hitPoints = 999999999;
-      damage = 0;
+void Entities::SetBody(b2Body* body) { _body = body; }
+
+void Entities::SetTexture(const sf::Texture& texture, const Vector2& scale) {
+  _sprite = std::make_unique<sf::Sprite>(texture);
+  _sprite->setScale(scale);
+
+  // Set origin to center as body position is center of the body
+  sf::Vector2f size = _sprite->getLocalBounds().getSize();
+  _sprite->setOrigin(size / 2.0f);
 }
 
-Entities::Entities(const std::string& name, b2Body* body, sf::Shape* shape, const Vector2& position)
-    : _name(name), _body(body), _shape(shape), _position(position), _prevPosition(position), _scale({1, 1}) {
-      _position = position;
-      _prevPosition = position;
-      _texture = nullptr;
-      hitPoints = 999999999;
-      damage = 0;
+void Entities::SetTextureRect(const sf::IntRect& rect, bool setOriginToCenter) {
+  if (_sprite == nullptr) return;
+  _sprite->setTextureRect(rect);
+
+  if (!setOriginToCenter) return;
+  sf::Vector2i size = rect.getSize();
+  _sprite->setOrigin(size.x / 2, size.y / 2);
 }
 
-Entities::~Entities() {
-  if (_shape != nullptr){
-    delete _shape;
-  }
+void Entities::SetRectShape(const Vector2& size) {
+  _shape = std::make_unique<sf::RectangleShape>(size);
+  _sprite->setOrigin(size / 2.0f);
+}
+
+void Entities::SetCirceShape(int radius) {
+  _shape = std::make_unique<sf::CircleShape>(radius);
+  _sprite->setOrigin(radius, radius);
+}
+
+void Entities::DestroyBody(Physics& physics) {
+  if (_body == nullptr) return;
+  physics.DestroyBody(_body);
+  _body = nullptr;
 }
 
 void Entities::Draw(Renderer& renderer, double t) {
+  if (_body == nullptr || (_shape == nullptr && _sprite == nullptr)) return;
+
+  // Body position is in physics world space
   b2Vec2 bodyPosition = _body->GetPosition();
-  Vector2 center = renderer.WorldToScreen({bodyPosition.x, bodyPosition.y});
+  // Body angle is in radians
+  float bodyAngle = _body->GetAngle() * (180 / b2_pi) * -1;
 
-  // _body.GetAngle(). Note that it's in radians
-  if (_texture != nullptr){
-  _sprite.setScale(_scale.x, _scale.y);
-  auto size = _sprite.getGlobalBounds().getSize();
-  _position = center - Vector2{size.x, size.y} / 2;
-
+  _position = renderer.WorldToScreen({bodyPosition.x, bodyPosition.y});
+  // Interpolated position in current render frame
   Vector2 framePosition = Vector2::lerp(_prevPosition, _position, t);
   _prevPosition = _position;
 
-  _sprite.setPosition(framePosition.x, framePosition.y);
-  renderer.DrawSprite(_sprite);
+  sf::Vector2f size;
+  if (_sprite != nullptr) {
+    size = _sprite->getGlobalBounds().getSize();
+
+    _sprite->setPosition(framePosition.x, framePosition.y);
+    _sprite->setRotation(bodyAngle);
+
+    renderer.DrawSprite(*_sprite);
+  } else if (_shape != nullptr) {
+    size = _shape->getGlobalBounds().getSize();
+
+    _shape->setPosition(framePosition.x, framePosition.y);
+    _shape->setRotation(bodyAngle);
+
+    renderer.DrawShape(*_shape);
   }
-  if (_shape != nullptr){
-  auto size = _shape->getLocalBounds().getSize();
-  _position = center - Vector2{size.x, size.y} / 2;
 
-  Vector2 framePosition = Vector2::lerp(_prevPosition, _position, t);
-  _prevPosition = _position;
-
-  _shape->setPosition(framePosition.x, framePosition.y);
-  renderer.DrawShape(*_shape);
+  // Check if entity bounds is out of view bounds
+  Vector2 topLeft = framePosition - size / 2.0f;
+  Vector2 bottomRight = framePosition + size / 2.0f;
+  const Vector2 windowSize = renderer.GetWindowSize();
+  if (bottomRight.x < 0 || bottomRight.y < 0 || topLeft.x > windowSize.x ||
+      topLeft.y > windowSize.y) {
+    _isDestroyed = true;
   }
 }
 
 void Entities::CollideWith(Entities* other) {
-  hitPoints -= other->GetDamage();
-  if (hitPoints <= 0) {
-    isDestroyed = true;
+  _hitPoints -= other->GetDamage();
+  if (_hitPoints <= 0) {
+    _isDestroyed = true;
   }
 }
 
-void Entities::ApplyForce(float x, float y, float n) {
-    b2Vec2 direction(x, y);
-    direction.Normalize();
-    b2Vec2 force = n * direction; 
-    _body->ApplyForceToCenter(force, true);
-}
-
-void Entities::Update(Renderer& renderer) {
-  b2Vec2 bodyPosition = _body->GetPosition();
-  _position = {bodyPosition.x, bodyPosition.y};
-
-  if (_position.x < 0 || _position.y < 0 || _position.x > renderer.GetWindowSize().x || _position.y > renderer.GetWindowSize().y) {
-    isDestroyed = true;
-  }
-
-  _sprite.setPosition(_position.x, _position.y);
-  _sprite.setRotation(_body->GetAngle() * 180 / b2_pi);   
-}
-
-bool Entities::IsDestroyed() const {
-  return isDestroyed;
-}
+bool Entities::IsDestroyed() const { return _isDestroyed; }
 
 b2Body* Entities::GetBody() const { return _body; }
-int Entities::GetDamage() {
-  return damage;
-}
+
+int Entities::GetDamage() const { return _damage; }
