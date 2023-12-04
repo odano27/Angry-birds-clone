@@ -21,3 +21,14 @@ void Input::AddEventHandler(sf::Event::EventType eventType,
                             IInputEventHandler* handler) {
   _eventHandlers.insert(std::make_pair(eventType, handler));
 }
+
+void Input::RemoveEventHandler(sf::Event::EventType eventType,
+                               IInputEventHandler* handler) {
+  auto range = _eventHandlers.equal_range(eventType);
+  for (auto it = range.first; it != range.second; ++it) {
+    if (it->second == handler) {
+      _eventHandlers.erase(it);
+      return;
+    }
+  }
+}

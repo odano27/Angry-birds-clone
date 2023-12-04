@@ -23,6 +23,9 @@ class Input {
   void AddEventHandler(sf::Event::EventType eventType,
                        IInputEventHandler* handler);
 
+  void RemoveEventHandler(sf::Event::EventType eventType,
+                          IInputEventHandler* handler);
+
  private:
   sf::RenderWindow& _window;
   std::unordered_multimap<sf::Event::EventType, IInputEventHandler*>

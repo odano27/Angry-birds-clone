@@ -87,12 +87,20 @@ void Game::HandleGameEvent(const GameEvent& event) {
     HUD& hud = static_cast<HUD&>(_uiManager->Show(UIScreenType::HUD));
     hud.SetLevelNumber(levelIndex + 1);
 
-    _level = new Level(*_physics, *_eventBus, *_assets);
-    _level->CerateLevel(levelIndex, *_renderer);
+    _level = new Level(*_renderer, *_physics, *_eventBus, *_assets);
+    _level->CerateLevel(levelIndex);
+
+    _input->AddEventHandler(sf::Event::MouseMoved, _level);
+    _input->AddEventHandler(sf::Event::MouseButtonPressed, _level);
+    _input->AddEventHandler(sf::Event::MouseButtonReleased, _level);
   } else if (event.type == GameEvent::RestartLevel) {
-    _level->RestartLevel(*_renderer);
+    _level->RestartLevel();
   } else if (event.type == GameEvent::BackToMenu) {
     _uiManager->Show(UIScreenType::MainMenu);
+
+    _input->RemoveEventHandler(sf::Event::MouseMoved, _level);
+    _input->RemoveEventHandler(sf::Event::MouseButtonPressed, _level);
+    _input->RemoveEventHandler(sf::Event::MouseButtonReleased, _level);
 
     delete _level;
     _level = nullptr;

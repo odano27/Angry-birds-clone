@@ -22,7 +22,7 @@ class Entities {
   void SetCirceShape(int radius);
   void DestroyBody(Physics& physics);
 
-  void Draw(Renderer& renderer, double t);
+  virtual void Draw(Renderer& renderer, double t);
 
   virtual void CollideWith(Entities* other);  // called when collision happens
   virtual int GetDamage() const;
@@ -39,12 +39,13 @@ class Entities {
   int _hitPoints;
   int _damage;
 
+  std::unique_ptr<sf::Sprite> _sprite;
+
  private:
   std::string _name;
 
   b2Body* _body;
   std::unique_ptr<sf::Shape> _shape;
-  std::unique_ptr<sf::Sprite> _sprite;
 
   Vector2 _position;
   Vector2 _prevPosition;

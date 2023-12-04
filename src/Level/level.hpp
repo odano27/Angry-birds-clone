@@ -5,11 +5,13 @@
 
 #include "Birds.h"
 #include "GameEvent.h"
+#include "Input.h"
 #include "leveldata.hpp"
 
-class Level {
+class Level : public IInputEventHandler {
  public:
-  Level(Physics& physics, GameEventBus& eventBus, AssetLoader& assets);
+  Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
+        AssetLoader& assets);
   ~Level();
 
   void loadLevel(LevelData& data);
@@ -17,27 +19,33 @@ class Level {
   int calculateScore();
 
   void Draw(Renderer& renderer, double t);
+  void HandleInputEvent(const sf::Event& event) override;
 
-  void CerateLevel(int levelIndex, Renderer& renderer);
-  void RestartLevel(Renderer& renderer);
+  void CerateLevel(int levelIndex);
+  void RestartLevel();
 
  private:
+  Renderer& _renderer;
   Physics& _physics;
   GameEventBus& _eventBus;
   AssetLoader& _assets;
 
   std::vector<std::unique_ptr<Entities>> _entities;
-  std::unique_ptr<Birds> _activeBird;
+  int _slingshotIndex;
+  int _previewIndex;
 
   int score;
   bool levelComplete;
   int _levelIndex;
 
-  void CreateLevel1(Renderer& renderer);
-  void CreateLevel2(Renderer& renderer);
-  void CreateLevel3(Renderer& renderer);
+  void CreateCommon();
+  void CreateLevel1();
+  void CreateLevel2();
+  void CreateLevel3();
 
-  void AddEntity(Entities*&& entity);
+  int AddEntity(Entities*&& entity);
+  void RemoveEntity(int index);
+  Entities& GetEntity(int index);
 };
 
 #endif  // _LEVEL_HPP_
