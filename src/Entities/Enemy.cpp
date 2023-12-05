@@ -56,11 +56,8 @@ Enemy::Enemy(EnemyType type, const Vector2& screenPos, Renderer& renderer,
 }
 
 void Enemy::CollideWith(Entities* other) {
-  if (other->IsBird()) {
-    if (other->GetDamage() >= _instakillRequirement) {
-      _hitPoints = -1;
-    } else {
-      _hitPoints -= other->GetDamage();
-    }
-  }
+  if (other->IsBird() && other->GetDamage() >= _instakillRequirement)
+    _hitPoints = -1;
+
+  Entities::CollideWith(other);
 }

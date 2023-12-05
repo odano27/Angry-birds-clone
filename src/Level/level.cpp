@@ -37,6 +37,8 @@ void Level::HandleInputEvent(const sf::Event& event) {
   sf::Vector2f origin = slingshot.GetSpawnPosition();
 
   if (event.type == sf::Event::MouseButtonPressed) {
+    _physics.SetCollisionsEnabled(true);
+
     if (slingshot.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
       _previewIndex = AddEntity(new BirdPreview(
           BirdType::Red, event.mouseButton.x, event.mouseButton.y, _assets));
@@ -87,6 +89,9 @@ bool Level::isCompleted() const {
 }
 
 void Level::CerateLevel(int levelIndex) {
+  // Prevents unnecessary collisions between level entities
+  _physics.SetCollisionsEnabled(false);
+
   _levelIndex = levelIndex;
 
   CreateCommon();

@@ -33,6 +33,7 @@ class Entities {
   }  // Default false for entities, enemy overrides to yes.
 
   bool IsDestroyed() const;
+  bool CanCollide() const;
   b2Body* GetBody() const;
 
  protected:

@@ -9,8 +9,6 @@ DebugDraw::DebugDraw(Renderer& renderer) : _renderer(renderer) {
   SetFlags(b2Draw::e_shapeBit);
 }
 
-DebugDraw::~DebugDraw() {}
-
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount,
                             const b2Color& color) {
   sf::ConvexShape shape;

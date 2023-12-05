@@ -16,7 +16,14 @@ Entities::Entities(const std::string& name) : _name(name) {
   _isDestroyed = false;
 }
 
-void Entities::SetBody(b2Body* body) { _body = body; }
+void Entities::SetBody(b2Body* body) {
+  _body = body;
+
+  // Keep a pointer to this entity in body's userData
+  // This way we can access entity when we only have body (e.g. in physics)
+  b2BodyUserData& userData = _body->GetUserData();
+  userData.pointer = reinterpret_cast<uintptr_t>(this);
+}
 
 void Entities::SetTexture(const sf::Texture& texture, const Vector2& scale) {
   _sprite = std::make_unique<sf::Sprite>(texture);
@@ -100,6 +107,8 @@ void Entities::CollideWith(Entities* other) {
 }
 
 bool Entities::IsDestroyed() const { return _isDestroyed; }
+
+bool Entities::CanCollide() const { return !_isDestroyed && _damage > 0; }
 
 b2Body* Entities::GetBody() const { return _body; }
 

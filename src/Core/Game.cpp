@@ -13,9 +13,7 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   _input = new Input(window);
   _renderer = new Renderer(window);
   _eventBus = new GameEventBus();
-
-  DebugDraw* debugDraw = new DebugDraw(*_renderer);
-  _physics = new Physics(debugDraw);
+  _physics = new Physics(*_renderer);
 
   _assets = new AssetLoader();
   _uiManager = new UIManager(*_eventBus, *_assets, _renderer->GetWindowSize());

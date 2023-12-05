@@ -10,17 +10,17 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
 
   switch (type) {
     case BirdType::Red:
-      _hitPoints = 100;
+      _hitPoints = 50;
       _damage = 10;
       break;
 
     case BirdType::Yellow:
-      _hitPoints = 100;
+      _hitPoints = 50;
       _damage = 10;
       break;
 
     case BirdType::Big_Red:
-      _hitPoints = 200;
+      _hitPoints = 100;
       _damage = 30;
       break;
   }
@@ -85,7 +85,8 @@ void Birds::ability(Vector2 mouseLocation) {
 }
 
 int Birds::GetDamage() const {
-  return _damage * this->GetBody()->GetLinearVelocity().Length();
+  float speed = this->GetBody()->GetLinearVelocity().Length();
+  return _damage * (speed / 5);
 }
 
 const std::string Birds::GetTextureName(BirdType type) {

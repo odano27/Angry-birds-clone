@@ -2,20 +2,23 @@
 
 #include <b2_world.h>
 
+#include "ContactListener.h"
 #include "DebugDraw.h"
+#include "Renderer.h"
 
 class Physics {
  public:
-  Physics(DebugDraw* debugDraw);
-  ~Physics();
+  Physics(Renderer& renderer);
 
   void FixedUpdate(double fixedDeltaTime);
   void DrawDebug();
+  void SetCollisionsEnabled(bool enabled);
 
   b2Body* CreateBody(const b2BodyDef* bodyDef);
   void DestroyBody(b2Body* body);
 
  private:
-  b2World* _world;
-  DebugDraw* _debugDraw;
+  std::unique_ptr<b2World> _world;
+  DebugDraw _debugDraw;
+  ContactListener _contactListener;
 };

@@ -7,7 +7,7 @@ Obstacles::Obstacles(ObstacleType type, const Vector2& screenPos,
                      Renderer& renderer, Physics& physics, AssetLoader& assets)
     : Entities("Obstacle") {
   _hitPoints = 50;
-  _damage = 5;
+  _damage = 20;
 
   Vector2 size;
   std::string textureName;
