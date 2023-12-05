@@ -10,6 +10,8 @@
 
 class Level : public IInputEventHandler {
  public:
+  static constexpr float SPEED_MULT = 5.0f;
+
   Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
         AssetLoader& assets);
   ~Level();
@@ -42,6 +44,8 @@ class Level : public IInputEventHandler {
   void CreateLevel1();
   void CreateLevel2();
   void CreateLevel3();
+
+  int GetAngle(int mouseX, int mouseY, sf::Vector2f origin);
 
   int AddEntity(Entities*&& entity);
   void RemoveEntity(int index);

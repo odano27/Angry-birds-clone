@@ -12,12 +12,12 @@ enum class BirdType {
 
 class Birds : public Entities {
  public:
-  Birds(BirdType type, int mouseX, int mouseY, Renderer& renderer,
-        Physics& physics, AssetLoader& assets);
+  Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
+        Renderer& renderer, Physics& physics, AssetLoader& assets);
 
   bool IsBird() const override { return true; }
 
-  void ApplyImpulse(float x, float y, float n);
+  void Throw(float x, float y, float n);
   void ability(
       Vector2 mouseLocation);  // called when mouse is clicked, get world
                                // position of mouse with renderer.ScreenToWorld

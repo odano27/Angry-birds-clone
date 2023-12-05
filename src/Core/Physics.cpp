@@ -2,7 +2,7 @@
 
 #include <b2_common.h>
 
-const int32 _velocityIterations = 15;
+const int32 _velocityIterations = 12;
 const int32 _positionIterations = 15;
 
 Physics::Physics(DebugDraw* debugDraw) : _debugDraw(debugDraw) {

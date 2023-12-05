@@ -41,6 +41,8 @@ class Entities {
 
   std::unique_ptr<sf::Sprite> _sprite;
 
+  int _initAngle;
+
  private:
   std::string _name;
 

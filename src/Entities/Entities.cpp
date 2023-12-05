@@ -7,6 +7,7 @@ Entities::Entities(const std::string& name) : _name(name) {
   _shape = nullptr;
   _sprite = nullptr;
 
+  _initAngle = 0;
   _position = Vector2::zero();
   _prevPosition = Vector2::zero();
 
@@ -69,14 +70,14 @@ void Entities::Draw(Renderer& renderer, double t) {
     size = _sprite->getGlobalBounds().getSize();
 
     _sprite->setPosition(framePosition.x, framePosition.y);
-    _sprite->setRotation(bodyAngle);
+    _sprite->setRotation(_initAngle + bodyAngle);
 
     renderer.DrawSprite(*_sprite);
   } else if (_shape != nullptr) {
     size = _shape->getGlobalBounds().getSize();
 
     _shape->setPosition(framePosition.x, framePosition.y);
-    _shape->setRotation(bodyAngle);
+    _shape->setRotation(_initAngle + bodyAngle);
 
     renderer.DrawShape(*_shape);
   }

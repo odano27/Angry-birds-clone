@@ -3,9 +3,11 @@
 #include <b2_circle_shape.h>
 #include <b2_fixture.h>
 
-Birds::Birds(BirdType type, int mouseX, int mouseY, Renderer& renderer,
-             Physics& physics, AssetLoader& assets)
+Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
+             Renderer& renderer, Physics& physics, AssetLoader& assets)
     : Entities("Bird"), _type(type) {
+  _initAngle = angle;
+
   switch (type) {
     case BirdType::Red:
       _hitPoints = 100;
@@ -25,8 +27,7 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, Renderer& renderer,
 
   double radius = GetRadius(type);
   Vector2 worldPos = renderer.ScreenToWorld(
-      Vector2{static_cast<double>(mouseX), static_cast<double>(mouseY)} +
-      radius);
+      Vector2{static_cast<double>(mouseX), static_cast<double>(mouseY)});
 
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
@@ -48,14 +49,16 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, Renderer& renderer,
   double d = radius * 2;
   const sf::Texture& texture = assets.GetTexture(GetTextureName(type));
   sf::Vector2u textureSize = texture.getSize();
-  SetTexture(texture, {d / textureSize.x, d / textureSize.y});
+  SetTexture(texture, {d / textureSize.x * (flip ? -1 : 1), d / textureSize.y});
 }
 
-void Birds::ApplyImpulse(float x, float y, float n) {
+void Birds::Throw(float x, float y, float n) {
   b2Vec2 direction(x, y);
   direction.Normalize();
-  b2Vec2 impulse = n * direction;
-  GetBody()->ApplyLinearImpulseToCenter(impulse, true);
+  b2Body* body = GetBody();
+  b2Vec2 impulse = body->GetMass() * n * direction;
+  body->ApplyLinearImpulseToCenter(impulse, true);
+  body->SetAngularVelocity(-n / 25.0f);
 }
 
 void Birds::ability(Vector2 mouseLocation) {

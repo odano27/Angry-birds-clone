@@ -47,27 +47,24 @@ void Level::HandleInputEvent(const sf::Event& event) {
     RemoveEntity(_previewIndex);
     _previewIndex = -1;
 
-    sf::Vector2f dir =
-        origin - sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+    int mouseX = event.mouseButton.x;
+    int mouseY = event.mouseButton.y;
+    int angle = GetAngle(mouseX, mouseY, origin);
+    sf::Vector2f dir = origin - sf::Vector2f(mouseX, mouseY);
     float len = std::sqrt(std::pow(dir.x, 2) + std::pow(dir.y, 2));
 
     int birdIndex =
-        AddEntity(new Birds(BirdType::Red, event.mouseButton.x,
-                            event.mouseButton.y, _renderer, _physics, _assets));
+        AddEntity(new Birds(BirdType::Red, mouseX, mouseY, angle,
+                            mouseX > origin.x, _renderer, _physics, _assets));
 
     Birds& bird = static_cast<Birds&>(GetEntity(birdIndex));
-    bird.ApplyImpulse(dir.x, -dir.y, len);
+    bird.Throw(dir.x, -dir.y, (len / Renderer::PPU) * SPEED_MULT);
   } else if (event.type == sf::Event::MouseMoved) {
     if (_previewIndex < 0) return;
 
     int mouseX = event.mouseMove.x;
     int mouseY = event.mouseMove.y;
-    int angle =
-        std::atan2(mouseY - origin.y, mouseX - origin.x) * (180 / b2_pi);
-    if (angle < -90)
-      angle += 180;
-    else if (angle > 90)
-      angle -= 180;
+    int angle = GetAngle(mouseX, mouseY, origin);
 
     BirdPreview& preview = static_cast<BirdPreview&>(GetEntity(_previewIndex));
     preview.SetPosition(mouseX, mouseY);
@@ -158,6 +155,15 @@ void Level::CreateLevel3() {
                           _physics, _assets));
   AddEntity(new Obstacles(ObstacleType::Plank_hor, {610.0, 255.0}, _renderer,
                           _physics, _assets));
+}
+
+int Level::GetAngle(int mouseX, int mouseY, sf::Vector2f origin) {
+  int angle = std::atan2(mouseY - origin.y, mouseX - origin.x) * (180 / b2_pi);
+  if (angle < -90)
+    angle += 180;
+  else if (angle > 90)
+    angle -= 180;
+  return angle;
 }
 
 int Level::AddEntity(Entities*&& entity) {
