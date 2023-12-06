@@ -15,6 +15,7 @@ class UIText : public UIElement {
          const sf::Font& font, int size = 12);
 
   void Draw(Renderer& renderer) override;
+  void SetText(const std::string& value);
 
  protected:
   void OnHierarchyChanged() override;

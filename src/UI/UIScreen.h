@@ -7,6 +7,7 @@
 enum class UIScreenType {
   MainMenu,
   HUD,
+  CompletedMenu,
 };
 
 class IUIManager;
@@ -39,7 +40,7 @@ class IUIManager {
       : _eventBus(eventBus), _assets(assets), _windowSize(windowSize){};
   virtual ~IUIManager() = default;
 
-  virtual UIScreen& Show(UIScreenType screenType) = 0;
+  virtual UIScreen& Show(UIScreenType screenType, void* data = nullptr) = 0;
 
  protected:
   virtual void PopScreen() = 0;

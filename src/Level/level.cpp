@@ -16,6 +16,7 @@ Level::Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
       _assets(assets) {
   _slingshotIndex = -1;
   _previewIndex = -1;
+  _levelCompleted = false;
 }
 
 Level::~Level() {
@@ -28,10 +29,19 @@ void Level::Draw(Renderer& renderer, double t) {
 
     if (entity->IsDestroyed()) entity->DestroyBody(_physics);
   }
+
+  if (!_levelCompleted && isCompleted()) {
+    _levelCompleted = true;
+
+    GameEvent e;
+    e.type = GameEvent::LevelCompleted;
+    e.levelCompleted.lastLevel = _levelIndex == 2;
+    _eventBus.Publish(e);
+  }
 }
 
 void Level::HandleInputEvent(const sf::Event& event) {
-  if (_slingshotIndex < 0) return;
+  if (_levelCompleted || _slingshotIndex < 0) return;
 
   Slingshot& slingshot = static_cast<Slingshot&>(GetEntity(_slingshotIndex));
   sf::Vector2f origin = slingshot.GetSpawnPosition();
@@ -88,11 +98,12 @@ bool Level::isCompleted() const {
   return true;
 }
 
-void Level::CerateLevel(int levelIndex) {
+void Level::CreateLevel(int levelIndex) {
   // Prevents unnecessary collisions between level entities
   _physics.SetCollisionsEnabled(false);
 
   _levelIndex = levelIndex;
+  _levelCompleted = false;
 
   CreateCommon();
   if (levelIndex == 0)
@@ -104,9 +115,19 @@ void Level::CerateLevel(int levelIndex) {
 }
 
 void Level::RestartLevel() {
+  ClearLevel();
+  CreateLevel(_levelIndex);
+}
+
+int Level::NextLevel() {
+  ClearLevel();
+  CreateLevel(_levelIndex + 1);
+  return _levelIndex;
+}
+
+void Level::ClearLevel() {
   for (auto& entity : _entities) entity->DestroyBody(_physics);
   _entities.clear();
-  CerateLevel(_levelIndex);
 }
 
 void Level::CreateCommon() {

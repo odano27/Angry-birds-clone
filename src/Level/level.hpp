@@ -23,8 +23,9 @@ class Level : public IInputEventHandler {
   void Draw(Renderer& renderer, double t);
   void HandleInputEvent(const sf::Event& event) override;
 
-  void CerateLevel(int levelIndex);
+  void CreateLevel(int levelIndex);
   void RestartLevel();
+  int NextLevel();
 
  private:
   Renderer& _renderer;
@@ -37,9 +38,10 @@ class Level : public IInputEventHandler {
   int _previewIndex;
 
   int score;
-  bool levelComplete;
+  bool _levelCompleted;
   int _levelIndex;
 
+  void ClearLevel();
   void CreateCommon();
   void CreateLevel1();
   void CreateLevel2();

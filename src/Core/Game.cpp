@@ -4,6 +4,7 @@
 #include <SFML/System/Time.hpp>
 #include <iostream>
 
+#include "CompletedMenu.h"
 #include "DebugDraw.h"
 #include "Entities.h"
 #include "HUD.h"
@@ -21,6 +22,8 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
 
   _eventBus->AddEventHandler(GameEvent::StartLevel, this);
   _eventBus->AddEventHandler(GameEvent::RestartLevel, this);
+  _eventBus->AddEventHandler(GameEvent::LevelCompleted, this);
+  _eventBus->AddEventHandler(GameEvent::NextLevel, this);
   _eventBus->AddEventHandler(GameEvent::BackToMenu, this);
 
   _uiManager->Show(UIScreenType::MainMenu);
@@ -82,18 +85,26 @@ void Game::HandleGameEvent(const GameEvent& event) {
   if (event.type == GameEvent::StartLevel) {
     int levelIndex = event.startLevel.index;
 
-    HUD& hud = static_cast<HUD&>(_uiManager->Show(UIScreenType::HUD));
-    hud.SetLevelNumber(levelIndex + 1);
+    HUD::Data data{levelIndex};
+    _uiManager->Show(UIScreenType::HUD, &data);
 
     _level = new Level(*_renderer, *_physics, *_eventBus, *_assets);
-    _level->CerateLevel(levelIndex);
+    _level->CreateLevel(levelIndex);
 
     _input->AddEventHandler(sf::Event::MouseMoved, _level);
     _input->AddEventHandler(sf::Event::MouseButtonPressed, _level);
     _input->AddEventHandler(sf::Event::MouseButtonReleased, _level);
   } else if (event.type == GameEvent::RestartLevel) {
     _level->RestartLevel();
+  } else if (event.type == GameEvent::LevelCompleted) {
+    CompletedMenu::Data data{event.levelCompleted.lastLevel};
+    _uiManager->Show(UIScreenType::CompletedMenu, &data);
+  } else if (event.type == GameEvent::NextLevel) {
+    int levelIndex = _level->NextLevel();
+    HUD* hud = static_cast<HUD*>(_uiManager->Get(UIScreenType::HUD));
+    hud->SetLevelIndex(levelIndex);
   } else if (event.type == GameEvent::BackToMenu) {
+    _uiManager->HideAll();
     _uiManager->Show(UIScreenType::MainMenu);
 
     _input->RemoveEventHandler(sf::Event::MouseMoved, _level);

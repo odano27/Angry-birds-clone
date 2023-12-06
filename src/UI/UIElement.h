@@ -20,6 +20,7 @@ class UIElement {
   UIElement& operator=(const UIElement&) = delete;
 
   void AddChild(std::unique_ptr<UIElement> child);
+  UIElement& GetChild(int index) const;
   bool PropagateClick(UIClickEvent& event);
 
   virtual void Draw(Renderer& renderer);

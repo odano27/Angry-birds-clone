@@ -11,9 +11,15 @@ class GameEvent {
     int index;
   };
 
+  struct LevelCompletedEvent {
+    bool lastLevel;
+  };
+
   enum EventType {
     StartLevel,
     RestartLevel,
+    LevelCompleted,
+    NextLevel,
     BackToMenu,
   };
 
@@ -21,6 +27,7 @@ class GameEvent {
 
   union {
     StartLevelEvent startLevel;
+    LevelCompletedEvent levelCompleted;
   };
 };
 

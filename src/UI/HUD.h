@@ -4,13 +4,19 @@
 
 class HUD : public UIScreen {
  public:
-  HUD(IUIManager& manager);
+  struct Data {
+    int levelIndex;
+  };
+
+  HUD(IUIManager& manager, Data* data);
 
   UIScreenType GetType() override;
 
-  void SetLevelNumber(int levelNumber);
+  void SetLevelIndex(int levelIndex);
 
  private:
+  const std::string GetLevelStr(int levelIndex);
+
   void RestartLevel();
   void BackToMenu();
 };
