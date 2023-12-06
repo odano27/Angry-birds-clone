@@ -23,6 +23,8 @@ void UIText::SetText(const std::string& value) {
   _text->setPosition(position);
 }
 
+void UIText::SetColor(const sf::Color& color) { _text->setFillColor(color); }
+
 void UIText::OnHierarchyChanged() {
   // Update position relative to new parent
   Vector2 globalPosition = GetGlobalPosition();

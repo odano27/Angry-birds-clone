@@ -27,9 +27,9 @@ class UIScreen {
   IUIManager& _manager;
 
   void Hide();
-  AssetLoader& GetAssets();
-  GameEventBus& GetEventBus();
-  const Vector2& GetWindowSize();
+  AssetLoader& GetAssets() const;
+  GameEventBus& GetEventBus() const;
+  const Vector2& GetWindowSize() const;
 };
 
 class IUIManager {

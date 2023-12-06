@@ -16,6 +16,7 @@ class UIText : public UIElement {
 
   void Draw(Renderer& renderer) override;
   void SetText(const std::string& value);
+  void SetColor(const sf::Color& color);
 
  protected:
   void OnHierarchyChanged() override;

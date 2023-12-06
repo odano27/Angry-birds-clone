@@ -10,6 +10,11 @@ void UIImage::Draw(Renderer& renderer) {
   UIElement::Draw(renderer);
 }
 
+void UIImage::SetScale(const Vector2& scale) {
+  if (_shape != nullptr) _shape->setScale(scale);
+  if (_sprite != nullptr) _sprite->setScale(scale);
+}
+
 void UIImage::OnHierarchyChanged() {
   // Update position relative to new parent
   Vector2 globalPosition = GetGlobalPosition();

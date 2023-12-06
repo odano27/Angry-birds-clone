@@ -13,6 +13,7 @@ class UIImage : public UIElement {
   UIImage(const Vector2& localPosition);
 
   void Draw(Renderer& renderer) override;
+  void SetScale(const Vector2& scale);
 
  protected:
   void OnHierarchyChanged() override;

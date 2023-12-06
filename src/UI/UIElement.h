@@ -21,6 +21,7 @@ class UIElement {
 
   void AddChild(std::unique_ptr<UIElement> child);
   UIElement& GetChild(int index) const;
+  int GetChildCount() const;
   bool PropagateClick(UIClickEvent& event);
 
   virtual void Draw(Renderer& renderer);

@@ -87,7 +87,8 @@ void Game::HandleGameEvent(const GameEvent& event) {
     _level = new Level(*_renderer, *_physics, *_eventBus, *_assets);
     _level->CreateLevel(levelIndex);
 
-    HUD::Data data{levelIndex, _level->GetEnemiesTotal()};
+    HUD::Data data{levelIndex, _level->GetEnemiesTotal(),
+                   _level->GetAmountByBird()};
     _uiManager->Show(UIScreenType::HUD, &data);
 
     _input->AddEventHandler(sf::Event::MouseMoved, _level);

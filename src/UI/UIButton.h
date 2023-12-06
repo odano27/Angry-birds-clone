@@ -13,6 +13,8 @@ class UIButton : public UIElement {
 
   UIButton(const Vector2& localPosition);
 
+  void SetScale(const Vector2& scale);
+
  protected:
   bool TryProcessClick(UIClickEvent& event) override;
 

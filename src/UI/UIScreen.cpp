@@ -12,8 +12,8 @@ void UIScreen::Draw(Renderer& renderer) { _root->Draw(renderer); }
 
 void UIScreen::Hide() { _manager.PopScreen(); }
 
-AssetLoader& UIScreen::GetAssets() { return _manager._assets; }
+AssetLoader& UIScreen::GetAssets() const { return _manager._assets; }
 
-GameEventBus& UIScreen::GetEventBus() { return _manager._eventBus; }
+GameEventBus& UIScreen::GetEventBus() const { return _manager._eventBus; }
 
-const Vector2& UIScreen::GetWindowSize() { return _manager._windowSize; }
+const Vector2& UIScreen::GetWindowSize() const { return _manager._windowSize; }

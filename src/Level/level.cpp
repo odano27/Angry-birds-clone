@@ -18,10 +18,14 @@ Level::Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
   _previewIndex = -1;
   _enemiesTotal = _enemiesDestroyed = 0;
   _levelCompleted = false;
+
+  _eventBus.AddEventHandler(GameEvent::BirdSelected, this);
 }
 
 Level::~Level() {
   for (auto& entity : _entities) entity->DestroyBody(_physics);
+
+  _eventBus.RemoveEventHandler(GameEvent::BirdSelected, this);
 }
 
 void Level::Draw(Renderer& renderer, double t) {
@@ -55,7 +59,9 @@ void Level::Draw(Renderer& renderer, double t) {
 }
 
 void Level::HandleInputEvent(const sf::Event& event) {
-  if (_levelCompleted || _slingshotIndex < 0) return;
+  if (_levelCompleted || _slingshotIndex < 0 ||
+      _amountByBird.at(_selected) <= 0)
+    return;
 
   Slingshot& slingshot = static_cast<Slingshot&>(GetEntity(_slingshotIndex));
   sf::Vector2f origin = slingshot.GetSpawnPosition();
@@ -64,8 +70,8 @@ void Level::HandleInputEvent(const sf::Event& event) {
     _physics.SetCollisionsEnabled(true);
 
     if (slingshot.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
-      _previewIndex = AddEntity(new BirdPreview(
-          BirdType::Red, event.mouseButton.x, event.mouseButton.y, _assets));
+      _previewIndex = AddEntity(new BirdPreview(_selected, event.mouseButton.x,
+                                                event.mouseButton.y, _assets));
     }
   } else if (event.type == sf::Event::MouseButtonReleased) {
     if (_previewIndex < 0) return;
@@ -80,13 +86,18 @@ void Level::HandleInputEvent(const sf::Event& event) {
     float len = std::sqrt(std::pow(dir.x, 2) + std::pow(dir.y, 2));
 
     int birdIndex =
-        AddEntity(new Birds(BirdType::Red, mouseX, mouseY, angle,
-                            mouseX > origin.x, _renderer, _physics, _assets));
+        AddEntity(new Birds(_selected, mouseX, mouseY, angle, mouseX > origin.x,
+                            _renderer, _physics, _assets));
 
     Birds& bird = static_cast<Birds&>(GetEntity(birdIndex));
     bird.Throw(dir.x, -dir.y, (len / Renderer::PPU) * SPEED_MULT);
+
+    _amountByBird.at(_selected) -= 1;
+    UpdateHUD();
   } else if (event.type == sf::Event::MouseMoved) {
-    if (_previewIndex < 0) return;
+    if (_previewIndex < 0 ||
+        _previewIndex >= static_cast<int>(_entities.size()))
+      return;
 
     int mouseX = event.mouseMove.x;
     int mouseY = event.mouseMove.y;
@@ -99,6 +110,13 @@ void Level::HandleInputEvent(const sf::Event& event) {
   }
 }
 
+void Level::HandleGameEvent(const GameEvent& event) {
+  if (event.type == GameEvent::BirdSelected) {
+    _selected = event.birdSelected.type;
+    UpdateHUD();
+  }
+}
+
 void Level::CreateLevel(int levelIndex) {
   // Prevents unnecessary collisions between level entities
   _physics.SetCollisionsEnabled(false);
@@ -106,6 +124,7 @@ void Level::CreateLevel(int levelIndex) {
   _levelIndex = levelIndex;
   _levelCompleted = false;
   _enemiesTotal = _enemiesDestroyed = 0;
+  _amountByBird.clear();
 
   CreateCommon();
   if (levelIndex == 0)
@@ -114,6 +133,8 @@ void Level::CreateLevel(int levelIndex) {
     CreateLevel2();
   else if (levelIndex == 2)
     CreateLevel3();
+
+  _selected = _amountByBird.begin()->first;
 
   UpdateHUD();
 }
@@ -130,6 +151,10 @@ void Level::NextLevel() {
 
 int Level::GetEnemiesTotal() const { return _enemiesTotal; }
 
+const std::map<BirdType, int>& Level::GetAmountByBird() const {
+  return _amountByBird;
+}
+
 void Level::ClearLevel() {
   for (auto& entity : _entities) entity->DestroyBody(_physics);
   _entities.clear();
@@ -142,6 +167,8 @@ void Level::CreateCommon() {
 
 // Level with 2 red birds, one enemy on a plank (picture in plan folder)
 void Level::CreateLevel1() {
+  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
+
   AddEntity(
       new Enemy(EnemyType::Pig, {590.0, 230.0}, _renderer, _physics, _assets));
 
@@ -152,6 +179,9 @@ void Level::CreateLevel1() {
 // Level with 2 red and 2 yellow birds, 2 enemies, one inside plank house
 // (picture in plan folder)
 void Level::CreateLevel2() {
+  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
+  _amountByBird.insert(std::make_pair(BirdType::Yellow, 2));
+
   AddEntity(
       new Enemy(EnemyType::Pig, {500.0, 340.0}, _renderer, _physics, _assets));
   AddEntity(
@@ -168,6 +198,10 @@ void Level::CreateLevel2() {
 // Level with 2red, 2 yellow and 1 big red birds, 2 enemies, both inside plank
 // houses (picture in plan folder)
 void Level::CreateLevel3() {
+  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
+  _amountByBird.insert(std::make_pair(BirdType::Yellow, 2));
+  _amountByBird.insert(std::make_pair(BirdType::Big_Red, 1));
+
   AddEntity(
       new Enemy(EnemyType::Pig, {440.0, 340.0}, _renderer, _physics, _assets));
   AddEntity(
@@ -194,6 +228,8 @@ void Level::UpdateHUD() {
   e.levelUpdated.index = _levelIndex;
   e.levelUpdated.enemiesTotal = _enemiesTotal;
   e.levelUpdated.enemiesDestroyed = _enemiesDestroyed;
+  e.levelUpdated.amountByBird = &_amountByBird;
+  e.levelUpdated.selected = _selected;
   _eventBus.Publish(e);
 }
 

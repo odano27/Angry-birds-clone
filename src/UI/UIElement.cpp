@@ -10,6 +10,8 @@ void UIElement::AddChild(std::unique_ptr<UIElement> child) {
 
 UIElement& UIElement::GetChild(int index) const { return *_childs.at(index); }
 
+int UIElement::GetChildCount() const { return _childs.size(); }
+
 bool UIElement::PropagateClick(UIClickEvent& event) {
   // Iterate through hierarchy in reverse order until we found the lowest child
   // that can receive a click Try process click while returning back

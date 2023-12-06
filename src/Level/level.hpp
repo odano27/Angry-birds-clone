@@ -8,7 +8,7 @@
 #include "Input.h"
 #include "leveldata.hpp"
 
-class Level : public IInputEventHandler {
+class Level : public IInputEventHandler, public IGameEventHandler {
  public:
   static constexpr float SPEED_MULT = 5.0f;
 
@@ -20,12 +20,14 @@ class Level : public IInputEventHandler {
 
   void Draw(Renderer& renderer, double t);
   void HandleInputEvent(const sf::Event& event) override;
+  void HandleGameEvent(const GameEvent& event) override;
 
   void CreateLevel(int levelIndex);
   void RestartLevel();
   void NextLevel();
 
   int GetEnemiesTotal() const;
+  const std::map<BirdType, int>& GetAmountByBird() const;
 
  private:
   Renderer& _renderer;
@@ -41,6 +43,8 @@ class Level : public IInputEventHandler {
   int _levelIndex;
   int _enemiesTotal;
   int _enemiesDestroyed;
+  std::map<BirdType, int> _amountByBird;
+  BirdType _selected;
 
   void ClearLevel();
   void CreateCommon();

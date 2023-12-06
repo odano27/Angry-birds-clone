@@ -5,6 +5,8 @@
 #include <queue>
 #include <unordered_map>
 
+#include "Birds.h"
+
 class GameEvent {
  public:
   struct StartLevelEvent {
@@ -15,15 +17,22 @@ class GameEvent {
     int index;
     int enemiesTotal;
     int enemiesDestroyed;
+    const std::map<BirdType, int>* amountByBird;
+    BirdType selected;
   };
 
   struct LevelCompletedEvent {
     bool lastLevel;
   };
 
+  struct BirdSelectedEvent {
+    BirdType type;
+  };
+
   enum EventType {
     StartLevel,
     RestartLevel,
+    BirdSelected,
     LevelUpdated,
     LevelCompleted,
     NextLevel,
@@ -34,6 +43,7 @@ class GameEvent {
 
   union {
     StartLevelEvent startLevel;
+    BirdSelectedEvent birdSelected;
     LevelUpdatedEvent levelUpdated;
     LevelCompletedEvent levelCompleted;
   };
