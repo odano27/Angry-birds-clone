@@ -32,6 +32,16 @@ UIButtonBuilder& UIButtonBuilder::WithText(const std::string& value,
   return *this;
 }
 
+UIButtonBuilder& UIButtonBuilder::WithTexture(const sf::Texture& texture,
+                                              const Vector2& scale) {
+  UIImageBuilder builder({0.0, 0.0});
+  builder.WithTexture(texture, scale);
+  if (_originAtCenter) builder.WithOriginAtCenter();
+
+  _button->AddChild(builder.Build());
+  return *this;
+}
+
 UIButtonBuilder& UIButtonBuilder::WithClickHandler(
     std::function<void()> onClick) {
   _button->_onClick = onClick;

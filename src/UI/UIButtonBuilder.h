@@ -13,6 +13,8 @@ class UIButtonBuilder {
   UIButtonBuilder& WithText(const std::string& value, const sf::Font& font,
                             int size = 18,
                             const sf::Color& color = sf::Color::Black);
+  UIButtonBuilder& WithTexture(const sf::Texture& texture,
+                               const Vector2& scale = Vector2::one());
   UIButtonBuilder& WithClickHandler(std::function<void()> onClick);
   std::unique_ptr<UIButton> Build();
 

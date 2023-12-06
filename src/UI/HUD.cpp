@@ -7,14 +7,14 @@
 
 HUD::HUD(IUIManager& manager, Data* data) : UIScreen({0.0, 0.0}, manager) {
   const sf::Font& font = GetAssets().GetFont("Roboto-Black");
-  _root->AddChild(UIButtonBuilder({GetWindowSize().x - 80.0, 45.0}, true)
-                      .WithRect(80.0f, 35.0f)
-                      .WithText("Menu", font)
+  _root->AddChild(UIButtonBuilder({GetWindowSize().x - 60.0, 50.0}, true)
+                      .WithTexture(GetAssets().GetTexture("Button_menu"),
+                                   Vector2::one() * 0.8)
                       .WithClickHandler([&]() { BackToMenu(); })
                       .Build());
-  _root->AddChild(UIButtonBuilder({GetWindowSize().x - 180.0, 45.0}, true)
-                      .WithRect(80.0f, 35.0f)
-                      .WithText("Restart", font)
+  _root->AddChild(UIButtonBuilder({GetWindowSize().x - 140.0, 50.0}, true)
+                      .WithTexture(GetAssets().GetTexture("Button_restart"),
+                                   Vector2::one() * 0.8)
                       .WithClickHandler([&]() { RestartLevel(); })
                       .Build());
 

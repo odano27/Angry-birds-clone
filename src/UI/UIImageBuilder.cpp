@@ -14,9 +14,22 @@ UIImageBuilder& UIImageBuilder::WithColor(const sf::Color& color) {
   return *this;
 }
 
+UIImageBuilder& UIImageBuilder::WithTexture(const sf::Texture& texture,
+                                            const Vector2& scale) {
+  _image->_sprite = std::make_unique<sf::Sprite>(texture);
+  _image->_sprite->setScale(scale);
+  return *this;
+}
+
 UIImageBuilder& UIImageBuilder::WithOriginAtCenter() {
-  sf::Vector2f size = _image->_shape->getLocalBounds().getSize();
-  _image->_shape->setOrigin(size.x / 2.0f, size.y / 2.0f);
+  if (_image->_shape != nullptr) {
+    sf::Vector2f size = _image->_shape->getLocalBounds().getSize();
+    _image->_shape->setOrigin(size / 2.0f);
+  }
+  if (_image->_sprite != nullptr) {
+    sf::Vector2f size = _image->_sprite->getLocalBounds().getSize();
+    _image->_sprite->setOrigin(size / 2.0f);
+  }
   return *this;
 }
 

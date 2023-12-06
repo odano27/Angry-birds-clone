@@ -20,4 +20,5 @@ class UIImage : public UIElement {
 
  private:
   std::unique_ptr<sf::Shape> _shape;
+  std::unique_ptr<sf::Sprite> _sprite;
 };
