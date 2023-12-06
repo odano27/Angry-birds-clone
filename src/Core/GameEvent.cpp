@@ -12,6 +12,17 @@ void GameEventBus::AddEventHandler(GameEvent::EventType eventType,
   _eventHandlers.insert(std::make_pair(eventType, handler));
 }
 
+void GameEventBus::RemoveEventHandler(GameEvent::EventType eventType,
+                                      IGameEventHandler* handler) {
+  auto range = _eventHandlers.equal_range(eventType);
+  for (auto it = range.first; it != range.second; ++it) {
+    if (it->second == handler) {
+      _eventHandlers.erase(it);
+      return;
+    }
+  }
+}
+
 void GameEventBus::ProcessEvents() {
   GameEvent event;
   while (PollEvent(event)) ProcessEvent(event);

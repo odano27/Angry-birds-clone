@@ -84,12 +84,11 @@ void Game::RunLoop() {
 void Game::HandleGameEvent(const GameEvent& event) {
   if (event.type == GameEvent::StartLevel) {
     int levelIndex = event.startLevel.index;
-
-    HUD::Data data{levelIndex};
-    _uiManager->Show(UIScreenType::HUD, &data);
-
     _level = new Level(*_renderer, *_physics, *_eventBus, *_assets);
     _level->CreateLevel(levelIndex);
+
+    HUD::Data data{levelIndex, _level->GetEnemiesTotal()};
+    _uiManager->Show(UIScreenType::HUD, &data);
 
     _input->AddEventHandler(sf::Event::MouseMoved, _level);
     _input->AddEventHandler(sf::Event::MouseButtonPressed, _level);
@@ -100,9 +99,7 @@ void Game::HandleGameEvent(const GameEvent& event) {
     CompletedMenu::Data data{event.levelCompleted.lastLevel};
     _uiManager->Show(UIScreenType::CompletedMenu, &data);
   } else if (event.type == GameEvent::NextLevel) {
-    int levelIndex = _level->NextLevel();
-    HUD* hud = static_cast<HUD*>(_uiManager->Get(UIScreenType::HUD));
-    hud->SetLevelIndex(levelIndex);
+    _level->NextLevel();
   } else if (event.type == GameEvent::BackToMenu) {
     _uiManager->HideAll();
     _uiManager->Show(UIScreenType::MainMenu);

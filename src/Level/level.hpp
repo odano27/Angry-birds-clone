@@ -17,15 +17,15 @@ class Level : public IInputEventHandler {
   ~Level();
 
   void loadLevel(LevelData& data);
-  bool isCompleted() const;
-  int calculateScore();
 
   void Draw(Renderer& renderer, double t);
   void HandleInputEvent(const sf::Event& event) override;
 
   void CreateLevel(int levelIndex);
   void RestartLevel();
-  int NextLevel();
+  void NextLevel();
+
+  int GetEnemiesTotal() const;
 
  private:
   Renderer& _renderer;
@@ -37,9 +37,10 @@ class Level : public IInputEventHandler {
   int _slingshotIndex;
   int _previewIndex;
 
-  int score;
   bool _levelCompleted;
   int _levelIndex;
+  int _enemiesTotal;
+  int _enemiesDestroyed;
 
   void ClearLevel();
   void CreateCommon();
@@ -47,6 +48,7 @@ class Level : public IInputEventHandler {
   void CreateLevel2();
   void CreateLevel3();
 
+  void UpdateHUD();
   int GetAngle(int mouseX, int mouseY, sf::Vector2f origin);
 
   int AddEntity(Entities*&& entity);

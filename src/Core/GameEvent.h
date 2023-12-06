@@ -11,6 +11,12 @@ class GameEvent {
     int index;
   };
 
+  struct LevelUpdatedEvent {
+    int index;
+    int enemiesTotal;
+    int enemiesDestroyed;
+  };
+
   struct LevelCompletedEvent {
     bool lastLevel;
   };
@@ -18,6 +24,7 @@ class GameEvent {
   enum EventType {
     StartLevel,
     RestartLevel,
+    LevelUpdated,
     LevelCompleted,
     NextLevel,
     BackToMenu,
@@ -27,6 +34,7 @@ class GameEvent {
 
   union {
     StartLevelEvent startLevel;
+    LevelUpdatedEvent levelUpdated;
     LevelCompletedEvent levelCompleted;
   };
 };
@@ -46,6 +54,9 @@ class GameEventBus {
 
   void AddEventHandler(GameEvent::EventType eventType,
                        IGameEventHandler* handler);
+
+  void RemoveEventHandler(GameEvent::EventType eventType,
+                          IGameEventHandler* handler);
 
   void ProcessEvents();
 

@@ -16,6 +16,7 @@ Level::Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
       _assets(assets) {
   _slingshotIndex = -1;
   _previewIndex = -1;
+  _enemiesTotal = _enemiesDestroyed = 0;
   _levelCompleted = false;
 }
 
@@ -24,13 +25,26 @@ Level::~Level() {
 }
 
 void Level::Draw(Renderer& renderer, double t) {
-  for (auto& entity : _entities) {
+  for (auto it = _entities.begin(); it != _entities.end();) {
+    Entities* entity = it->get();
     entity->Draw(renderer, t);
 
-    if (entity->IsDestroyed()) entity->DestroyBody(_physics);
+    if (entity->IsDestroyed()) {
+      entity->DestroyBody(_physics);
+
+      if (entity->isEnemy()) {
+        _enemiesDestroyed++;
+        it = _entities.erase(it);
+
+        UpdateHUD();
+        continue;
+      }
+    }
+
+    it++;
   }
 
-  if (!_levelCompleted && isCompleted()) {
+  if (!_levelCompleted && _enemiesDestroyed >= _enemiesTotal) {
     _levelCompleted = true;
 
     GameEvent e;
@@ -85,25 +99,13 @@ void Level::HandleInputEvent(const sf::Event& event) {
   }
 }
 
-bool Level::isCompleted() const {
-  // check if level still has enemies alive or not -> completed if not
-  for (const auto& entity : _entities) {
-    // check if current entity is enemy
-    if (entity->isEnemy() && !entity->IsDestroyed()) {
-      // if any alive enemy exists, level not completed
-      return false;
-    }
-  }
-  // if no alive enemies, level completed
-  return true;
-}
-
 void Level::CreateLevel(int levelIndex) {
   // Prevents unnecessary collisions between level entities
   _physics.SetCollisionsEnabled(false);
 
   _levelIndex = levelIndex;
   _levelCompleted = false;
+  _enemiesTotal = _enemiesDestroyed = 0;
 
   CreateCommon();
   if (levelIndex == 0)
@@ -112,6 +114,8 @@ void Level::CreateLevel(int levelIndex) {
     CreateLevel2();
   else if (levelIndex == 2)
     CreateLevel3();
+
+  UpdateHUD();
 }
 
 void Level::RestartLevel() {
@@ -119,11 +123,12 @@ void Level::RestartLevel() {
   CreateLevel(_levelIndex);
 }
 
-int Level::NextLevel() {
+void Level::NextLevel() {
   ClearLevel();
   CreateLevel(_levelIndex + 1);
-  return _levelIndex;
 }
+
+int Level::GetEnemiesTotal() const { return _enemiesTotal; }
 
 void Level::ClearLevel() {
   for (auto& entity : _entities) entity->DestroyBody(_physics);
@@ -183,6 +188,15 @@ void Level::CreateLevel3() {
                           _physics, _assets));
 }
 
+void Level::UpdateHUD() {
+  GameEvent e;
+  e.type = GameEvent::LevelUpdated;
+  e.levelUpdated.index = _levelIndex;
+  e.levelUpdated.enemiesTotal = _enemiesTotal;
+  e.levelUpdated.enemiesDestroyed = _enemiesDestroyed;
+  _eventBus.Publish(e);
+}
+
 int Level::GetAngle(int mouseX, int mouseY, sf::Vector2f origin) {
   int angle = std::atan2(mouseY - origin.y, mouseX - origin.x) * (180 / b2_pi);
   if (angle < -90)
@@ -193,6 +207,8 @@ int Level::GetAngle(int mouseX, int mouseY, sf::Vector2f origin) {
 }
 
 int Level::AddEntity(Entities*&& entity) {
+  if (entity->isEnemy()) _enemiesTotal++;
+
   int index = _entities.size();
   _entities.push_back(std::unique_ptr<Entities>(std::move(entity)));
   return index;
