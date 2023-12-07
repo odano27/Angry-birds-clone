@@ -23,6 +23,7 @@ class GameEvent {
 
   struct LevelCompletedEvent {
     bool lastLevel;
+    bool levelFailed;
   };
 
   struct BirdSelectedEvent {

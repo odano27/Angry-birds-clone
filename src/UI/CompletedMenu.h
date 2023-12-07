@@ -6,6 +6,7 @@ class CompletedMenu : public UIScreen {
  public:
   struct Data {
     bool lastLevel;
+    bool levelFailed;
   };
 
   CompletedMenu(IUIManager& manager, Data* data);
@@ -13,7 +14,8 @@ class CompletedMenu : public UIScreen {
   UIScreenType GetType() override;
 
  private:
-  bool _lastLevel;
+  Data _data;
 
-  void StartNextLevel();
+  void StartLevel();
+  void BackToMenu();
 };

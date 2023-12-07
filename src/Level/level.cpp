@@ -29,6 +29,7 @@ Level::~Level() {
 }
 
 void Level::Draw(Renderer& renderer, double t) {
+  bool allBirdsDestroyed = true;
   for (auto it = _entities.begin(); it != _entities.end();) {
     Entities* entity = it->get();
     entity->Draw(renderer, t);
@@ -43,17 +44,31 @@ void Level::Draw(Renderer& renderer, double t) {
         UpdateHUD();
         continue;
       }
+    } else if (entity->IsBird()) {
+      allBirdsDestroyed = false;
     }
 
     it++;
   }
 
-  if (!_levelCompleted && _enemiesDestroyed >= _enemiesTotal) {
+  bool noBirdsLeft = true;
+  for (auto pair : _amountByBird) {
+    if (pair.second > 0) {
+      noBirdsLeft = false;
+      break;
+    }
+  }
+
+  bool isWin = _enemiesDestroyed >= _enemiesTotal;
+  bool isFail = allBirdsDestroyed && noBirdsLeft;
+
+  if (!_levelCompleted && (isWin || isFail)) {
     _levelCompleted = true;
 
     GameEvent e;
     e.type = GameEvent::LevelCompleted;
     e.levelCompleted.lastLevel = _levelIndex == 2;
+    e.levelCompleted.levelFailed = !isWin;
     _eventBus.Publish(e);
   }
 }

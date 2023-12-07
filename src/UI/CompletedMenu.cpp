@@ -7,7 +7,7 @@
 #include "UITextBuilder.h"
 
 CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
-    : UIScreen({0.0, 0.0}, manager), _lastLevel(data->lastLevel) {
+    : UIScreen({0.0, 0.0}, manager), _data(*data) {
   const sf::Font& font = GetAssets().GetFont("Roboto-Black");
 
   // Tint
@@ -29,32 +29,57 @@ CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
                       .WithColor(sf::Color::Blue)
                       .Build());
 
+  bool isGameWin = _data.lastLevel && !_data.levelFailed;
   // Title
   _root->AddChild(UITextBuilder(position + Vector2{hWidth, 40.0},
-                                _lastLevel ? "Game" : "Level", font, 30)
+                                isGameWin ? "Game" : "Level", font, 30)
+                      .WithColor(sf::Color::Yellow)
+                      .WithOriginAtCenter()
+                      .Build());
+  _root->AddChild(UITextBuilder(position + Vector2{hWidth, 80.0},
+                                _data.levelFailed ? "Failed" : "Completed",
+                                font, 30)
                       .WithColor(sf::Color::Yellow)
                       .WithOriginAtCenter()
                       .Build());
 
-  _root->AddChild(
-      UITextBuilder(position + Vector2{hWidth, 80.0}, "Completed", font, 30)
-          .WithColor(sf::Color::Yellow)
-          .WithOriginAtCenter()
-          .Build());
-
-  _root->AddChild(UIButtonBuilder(position + Vector2{hWidth, 140.0}, true)
-                      .WithRect(100.0f, 35.0f)
-                      .WithText(_lastLevel ? "Menu" : "Next Level", font)
-                      .WithClickHandler([&]() { StartNextLevel(); })
+  // Buttons
+  Vector2 buttonsPosition = position + Vector2{hWidth, 150.0};
+  _root->AddChild(UIButtonBuilder(isGameWin ? buttonsPosition
+                                            : Vector2{buttonsPosition.x - 40.0,
+                                                      buttonsPosition.y},
+                                  true)
+                      .WithTexture(GetAssets().GetTexture("Button_menu"),
+                                   Vector2::one() * 0.8)
+                      .WithClickHandler([&]() { BackToMenu(); })
                       .Build());
+
+  if (!isGameWin) {
+    _root->AddChild(
+        UIButtonBuilder({buttonsPosition.x + 40.0, buttonsPosition.y}, true)
+            .WithTexture(
+                GetAssets().GetTexture(_data.levelFailed ? "Button_restart"
+                                                         : "Button_next"),
+                Vector2::one() * (_data.levelFailed ? 0.8 : 0.5))
+            .WithClickHandler([&]() { StartLevel(); })
+            .Build());
+  }
 }
 
 UIScreenType CompletedMenu::GetType() { return UIScreenType::CompletedMenu; }
 
-void CompletedMenu::StartNextLevel() {
+void CompletedMenu::StartLevel() {
   Hide();
 
   GameEvent e;
-  e.type = _lastLevel ? GameEvent::BackToMenu : GameEvent::NextLevel;
+  e.type = _data.levelFailed ? GameEvent::RestartLevel : GameEvent::NextLevel;
+  GetEventBus().Publish(e);
+}
+
+void CompletedMenu::BackToMenu() {
+  Hide();
+
+  GameEvent e;
+  e.type = GameEvent::BackToMenu;
   GetEventBus().Publish(e);
 }
