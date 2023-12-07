@@ -38,6 +38,7 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   std::vector<std::unique_ptr<Entities>> _entities;
   int _slingshotIndex;
   int _previewIndex;
+  int _lastBirdIndex;
 
   bool _levelCompleted;
   int _levelIndex;

@@ -5,7 +5,7 @@
 
 Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
              Renderer& renderer, Physics& physics, AssetLoader& assets)
-    : Entities("Bird"), _type(type) {
+    : Entities("Bird"), _type(type), _canUseAbility(true) {
   _initAngle = angle;
 
   switch (type) {
@@ -52,6 +52,12 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
   SetTexture(texture, {d / textureSize.x * (flip ? -1 : 1), d / textureSize.y});
 }
 
+void Birds::CollideWith(Entities* other) {
+  // Bird can only use ability when it flies
+  _canUseAbility = false;
+  Entities::CollideWith(other);
+}
+
 void Birds::Throw(float x, float y, float n) {
   b2Vec2 direction(x, y);
   direction.Normalize();
@@ -61,28 +67,32 @@ void Birds::Throw(float x, float y, float n) {
   body->SetAngularVelocity(-n / 25.0f);
 }
 
-void Birds::ability(Vector2 mouseLocation) {
+void Birds::UseAbility(Vector2 mouseLocation) {
+  // Bird can only use ability once
+  _canUseAbility = false;
+
+  float origSpeed = GetBody()->GetLinearVelocity().Length();
   switch (_type) {
     case BirdType::Red:  // nothing
       break;
 
-    case BirdType::Big_Red:  // nothing
+    // Big Red's ability is fast acceleration in down direction
+    case BirdType::Big_Red:
+      GetBody()->SetLinearVelocity(origSpeed * 3 * b2Vec2(0, -1));
       break;
 
+    // Yellow's ability is fast acceleration in click direction
     case BirdType::Yellow:
-      float origSpeed = this->GetBody()->GetLinearVelocity().Length();
-      b2Vec2 direction(mouseLocation.x - this->GetBody()->GetPosition().x,
-                       mouseLocation.y - this->GetBody()->GetPosition().y);
-      float length =
-          std::sqrt(direction.x * direction.x + direction.y * direction.y);
-      b2Vec2 normalizedDirection =
-          b2Vec2(direction.x / length, direction.y / length);
-      float speed = origSpeed * 3;  // replace with desired speed
-      b2Vec2 velocity = speed * normalizedDirection;
-      this->GetBody()->SetLinearVelocity(velocity);
+      b2Vec2 bodyPosition = GetBody()->GetPosition();
+      b2Vec2 direction(mouseLocation.x - bodyPosition.x,
+                       mouseLocation.y - bodyPosition.y);
+      direction.Normalize();
+      GetBody()->SetLinearVelocity(origSpeed * 3 * direction);
       break;
   }
 }
+
+bool Birds::CanUseAbility() const { return _canUseAbility && !IsDestroyed(); }
 
 int Birds::GetDamage() const {
   float speed = this->GetBody()->GetLinearVelocity().Length();

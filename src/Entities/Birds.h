@@ -16,13 +16,15 @@ class Birds : public Entities {
         Renderer& renderer, Physics& physics, AssetLoader& assets);
 
   bool IsBird() const override { return true; }
+  void CollideWith(Entities* other) override;
 
   void Throw(float x, float y, float n);
-  void ability(
+  void UseAbility(
       Vector2 mouseLocation);  // called when mouse is clicked, get world
                                // position of mouse with renderer.ScreenToWorld
                                // before calling this function
 
+  bool CanUseAbility() const;
   int GetDamage() const override;
 
   static const std::string GetTextureName(BirdType type);
@@ -30,6 +32,7 @@ class Birds : public Entities {
 
  private:
   BirdType _type;
+  bool _canUseAbility;
 };
 
 #endif  // BIRDS_H
