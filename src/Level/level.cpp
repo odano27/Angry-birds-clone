@@ -119,10 +119,21 @@ void Level::HandleInputEvent(const sf::Event& event) {
     int angle = GetAngle(mouseX, mouseY, origin);
     sf::Vector2f dir = origin - sf::Vector2f(mouseX, mouseY);
     float len = std::sqrt(std::pow(dir.x, 2) + std::pow(dir.y, 2));
+    float maxStretch = 150.0f;
+    if (len > maxStretch) {
+      dir /= len;
+      len = maxStretch;
+      dir *= len;
+    }
+
+    sf::Vector2f limitedPosition = origin - dir;
 
     _lastBirdIndex =
-        AddEntity(new Birds(_selected, mouseX, mouseY, angle, mouseX > origin.x,
-                            _renderer, _physics, _assets));
+        AddEntity(new Birds(
+            _selected, limitedPosition.x, limitedPosition.y, 
+            angle, limitedPosition.x > origin.x,
+            _renderer, _physics, _assets
+        ));
 
     Birds& bird = static_cast<Birds&>(GetEntity(_lastBirdIndex));
     bird.Throw(dir.x, -dir.y, (len / Renderer::PPU) * SPEED_MULT);
@@ -137,8 +148,21 @@ void Level::HandleInputEvent(const sf::Event& event) {
         _previewIndex >= static_cast<int>(_entities.size()))
       return;
 
+    sf::Vector2f origin = slingshot.GetSpawnPosition();
     int mouseX = event.mouseMove.x;
     int mouseY = event.mouseMove.y;
+    sf::Vector2f stretchVector = sf::Vector2f(mouseX, mouseY) - origin;
+
+    float maxStretchDistance = 150.5f;
+    float currentStretchDistance = sqrt(stretchVector.x * stretchVector.x + stretchVector.y * stretchVector.y);
+
+    if (currentStretchDistance > maxStretchDistance) {
+      stretchVector /= currentStretchDistance;
+      stretchVector *= maxStretchDistance;
+      mouseX = origin.x + stretchVector.x;
+      mouseY = origin.y + stretchVector.y;
+    }
+
     int angle = GetAngle(mouseX, mouseY, origin);
 
     BirdPreview& preview = static_cast<BirdPreview&>(GetEntity(_previewIndex));
