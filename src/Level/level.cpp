@@ -224,6 +224,8 @@ void Level::ClearLevel() {
 }
 
 void Level::CreateCommon() {
+  AddEntity(new SpriteEntity({0.0, 0.0}, "bg2", 1, _assets));
+
   _slingshotIndex = AddEntity(new Slingshot({100.0, 210.0}, _assets));
   AddEntity(new Ground(_renderer, _physics, _assets));
 }

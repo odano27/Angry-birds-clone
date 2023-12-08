@@ -6,43 +6,42 @@
 #include "UIImageBuilder.h"
 #include "UITextBuilder.h"
 
-MainMenu::MainMenu(IUIManager& manager) : UIScreen({300.0f, 190.0f}, manager) {
+MainMenu::MainMenu(IUIManager& manager) : UIScreen({0.0f, 0.0f}, manager) {
   const sf::Font& font = GetAssets().GetFont("Roboto-Black");
 
   // Background
-  float width = 200.0f;
-  float height = 215.0f;
-  double hWidth = width / 2.0;
+  Vector2 windowSize = GetWindowSize();
   _root->AddChild(UIImageBuilder({0.0, 0.0})
-                      .WithRect(width, height)
-                      .WithColor(sf::Color::Blue)
+                      .WithTexture(GetAssets().GetTexture("bg"))
                       .Build());
 
   // Title
-  _root->AddChild(UITextBuilder({hWidth, 25.0}, "Angry Birds", font, 30)
-                      .WithColor(sf::Color::Red)
-                      .WithOriginAtCenter()
-                      .Build());
+  _root->AddChild(
+      UITextBuilder({windowSize.x / 2.0, 200.0}, "Select Level", font, 80)
+          .WithColor(sf::Color::White)
+          .WithOutline()
+          .WithOriginAtCenter()
+          .Build());
 
   // Buttons
-  double buttonY = 85.0;
-  for (int i = 0; i < 3; i++) {
-    AddLevelButton(hWidth, buttonY, i, font);
-    buttonY += 45.0;
+  const int buttonsCount = 3;
+  const double buttonW = 100.0;
+  double buttonX = (windowSize.x - (buttonW * buttonsCount)) / 2;
+  for (int i = 0; i < buttonsCount; i++) {
+    AddLevelButton(buttonX + (buttonW * i), 270.0, i);
   }
 }
 
 UIScreenType MainMenu::GetType() { return UIScreenType::MainMenu; }
 
-void MainMenu::AddLevelButton(double x, double y, int levelIndex,
-                              const sf::Font& font) {
-  std::stringstream label;
-  label << "Level " << levelIndex + 1;
+void MainMenu::AddLevelButton(double x, double y, int levelIndex) {
+  std::stringstream textureName;
+  textureName << "Keyboard & Mouse textures/Light/" << levelIndex + 1
+              << "_Key_Light";
 
   _root->AddChild(
-      UIButtonBuilder({x, y}, true)
-          .WithRect(100.0f, 35.0f)
-          .WithText(label.str(), font)
+      UIButtonBuilder({x, y})
+          .WithTexture(GetAssets().GetTexture(textureName.str()))
           .WithClickHandler([&, levelIndex]() { StartLevel(levelIndex); })
           .Build());
 }

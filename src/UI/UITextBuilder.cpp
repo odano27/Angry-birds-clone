@@ -17,6 +17,14 @@ UITextBuilder& UITextBuilder::WithSize(int size) {
 
 UITextBuilder& UITextBuilder::WithColor(const sf::Color& color) {
   _text->_text->setFillColor(color);
+
+  return *this;
+}
+
+UITextBuilder& UITextBuilder::WithOutline(const sf::Color& color,
+                                          float thickness) {
+  _text->_text->setOutlineColor(color);
+  _text->_text->setOutlineThickness(thickness);
   return *this;
 }
 

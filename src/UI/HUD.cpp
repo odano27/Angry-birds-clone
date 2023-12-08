@@ -21,11 +21,13 @@ HUD::HUD(IUIManager& manager, Data* data) : UIScreen({0.0, 0.0}, manager) {
   _root->AddChild(
       UITextBuilder({30.0, 25.0}, GetLevelStr(data->levelIndex), font, 30)
           .WithColor(sf::Color::White)
+          .WithOutline()
           .Build());
 
   _root->AddChild(UITextBuilder({GetWindowSize().x / 2.0, 35.0},
                                 GetGoalStr(data->enemiesTotal), font, 30)
-                      .WithColor(sf::Color::Green)
+                      .WithColor(UIText::GREEN)
+                      .WithOutline()
                       .WithOriginAtCenter()
                       .Build());
 
@@ -90,8 +92,9 @@ void HUD::AddBirdButton(const Vector2& position, BirdType type, int amount,
                       .Build());
 
   _root->AddChild(
-      UITextBuilder({position.x, position.y + 45.0}, amountStr, font, 30)
+      UITextBuilder({position.x, position.y + 50.0}, amountStr, font, 30)
           .WithColor(color)
+          .WithOutline()
           .WithOriginAtCenter()
           .Build());
 }
@@ -109,7 +112,7 @@ const std::string HUD::GetGoalStr(int total, int destroyed) const {
 }
 
 const std::string HUD::GetAmountStr(int amount, sf::Color& color) const {
-  color = amount > 0 ? sf::Color::White : sf::Color::Red;
+  color = amount > 0 ? sf::Color::White : UIText::RED;
 
   std::stringstream s;
   s << "x" << amount;

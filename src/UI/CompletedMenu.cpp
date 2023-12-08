@@ -12,7 +12,7 @@ CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
 
   // Tint
   sf::Color tintColor = sf::Color::White;
-  tintColor.a = 150;
+  tintColor.a = 200;
   Vector2 windowSize = GetWindowSize();
   _root->AddChild(UIImageBuilder({0.0, 0.0})
                       .WithRect(windowSize.x, windowSize.y)
@@ -20,47 +20,43 @@ CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
                       .Build());
 
   // Background
-  float width = 200.0f;
-  float height = 200.0f;
-  double hWidth = width / 2.0;
-  Vector2 position = {300.0, 150.0};
-  _root->AddChild(UIImageBuilder(position)
-                      .WithRect(width, height)
-                      .WithColor(sf::Color::Blue)
-                      .Build());
+  double hWidth = windowSize.x / 2.0;
 
   bool isGameWin = _data.lastLevel && !_data.levelFailed;
+  sf::Color textColor = _data.levelFailed ? UIText::RED : UIText::GREEN;
   // Title
-  _root->AddChild(UITextBuilder(position + Vector2{hWidth, 40.0},
-                                isGameWin ? "Game" : "Level", font, 30)
-                      .WithColor(sf::Color::Yellow)
+  _root->AddChild(UITextBuilder(Vector2{hWidth, 150.0},
+                                isGameWin ? "Game" : "Level", font, 80)
+                      .WithColor(textColor)
+                      .WithOutline()
                       .WithOriginAtCenter()
                       .Build());
-  _root->AddChild(UITextBuilder(position + Vector2{hWidth, 80.0},
+  _root->AddChild(UITextBuilder(Vector2{hWidth, 240.0},
                                 _data.levelFailed ? "Failed" : "Completed",
-                                font, 30)
-                      .WithColor(sf::Color::Yellow)
+                                font, 80)
+                      .WithColor(textColor)
+                      .WithOutline()
                       .WithOriginAtCenter()
                       .Build());
 
   // Buttons
-  Vector2 buttonsPosition = position + Vector2{hWidth, 150.0};
-  _root->AddChild(UIButtonBuilder(isGameWin ? buttonsPosition
-                                            : Vector2{buttonsPosition.x - 40.0,
-                                                      buttonsPosition.y},
-                                  true)
-                      .WithTexture(GetAssets().GetTexture("Button_menu"),
-                                   Vector2::one() * 0.8)
-                      .WithClickHandler([&]() { BackToMenu(); })
-                      .Build());
+  Vector2 buttonsPosition = Vector2{hWidth, 355.0};
+  _root->AddChild(
+      UIButtonBuilder(
+          isGameWin ? buttonsPosition
+                    : Vector2{buttonsPosition.x - 50.0, buttonsPosition.y},
+          true)
+          .WithTexture(GetAssets().GetTexture("Button_menu"), Vector2::one())
+          .WithClickHandler([&]() { BackToMenu(); })
+          .Build());
 
   if (!isGameWin) {
     _root->AddChild(
-        UIButtonBuilder({buttonsPosition.x + 40.0, buttonsPosition.y}, true)
+        UIButtonBuilder({buttonsPosition.x + 50.0, buttonsPosition.y}, true)
             .WithTexture(
                 GetAssets().GetTexture(_data.levelFailed ? "Button_restart"
                                                          : "Button_next"),
-                Vector2::one() * (_data.levelFailed ? 0.8 : 0.5))
+                Vector2::one() * (_data.levelFailed ? 1.0 : 0.65))
             .WithClickHandler([&]() { StartLevel(); })
             .Build());
   }

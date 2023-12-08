@@ -9,6 +9,9 @@ class UITextBuilder;
 
 class UIText : public UIElement {
  public:
+  static sf::Color GREEN;
+  static sf::Color RED;
+
   friend class UITextBuilder;
 
   UIText(const Vector2& localPosition, const std::string& value,

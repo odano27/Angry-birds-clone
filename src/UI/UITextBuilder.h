@@ -12,6 +12,8 @@ class UITextBuilder {
   UITextBuilder& WithFont(const sf::Font& font);
   UITextBuilder& WithSize(int size);
   UITextBuilder& WithColor(const sf::Color& color);
+  UITextBuilder& WithOutline(const sf::Color& color = sf::Color::Black,
+                             float thickness = 2.0f);
   UITextBuilder& WithOriginAtCenter();
   std::unique_ptr<UIText> Build();
 

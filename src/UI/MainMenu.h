@@ -9,7 +9,7 @@ class MainMenu : public UIScreen {
   UIScreenType GetType() override;
 
  private:
-  void AddLevelButton(double x, double y, int levelIndex, const sf::Font& font);
+  void AddLevelButton(double x, double y, int levelIndex);
 
   void StartLevel(int levelIndex);
 };
