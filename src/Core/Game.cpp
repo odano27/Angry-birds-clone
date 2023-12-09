@@ -17,6 +17,8 @@ Game::Game(sf::RenderWindow& window) : _window(window) {
   _physics = new Physics(*_renderer);
 
   _assets = new AssetLoader();
+  _assets->LoadLevels();
+
   _uiManager = new UIManager(*_eventBus, *_assets, _renderer->GetWindowSize());
   _input->AddEventHandler(sf::Event::MouseButtonPressed, _uiManager);
 

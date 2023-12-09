@@ -16,8 +16,6 @@ class Level : public IInputEventHandler, public IGameEventHandler {
         AssetLoader& assets);
   ~Level();
 
-  void loadLevel(LevelData& data);
-
   void Draw(Renderer& renderer, double t);
   void HandleInputEvent(const sf::Event& event) override;
   void HandleGameEvent(const GameEvent& event) override;
@@ -48,10 +46,6 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   BirdType _selected;
 
   void ClearLevel();
-  void CreateCommon();
-  void CreateLevel1();
-  void CreateLevel2();
-  void CreateLevel3();
 
   void UpdateHUD();
   int GetAngle(int mouseX, int mouseY, sf::Vector2f origin);

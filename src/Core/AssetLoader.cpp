@@ -2,6 +2,19 @@
 
 #include <sstream>
 
+void AssetLoader::LoadLevels() {
+  for (int i = 0; i < LEVELS_COUNT; i++) {
+    std::stringstream path;
+    path << "src/Assets/Levels/level" << i + 1 << ".txt";
+
+    LevelData levelData(i);
+    levelData.Load(path.str());
+
+    if (levelData.IsValid())
+      _levelDataByIndex.insert(std::make_pair(i, levelData));
+  }
+}
+
 const sf::Font& AssetLoader::GetFont(const std::string& name) {
   if (auto it = _fontByName.find(name); it != _fontByName.end()) {
     return *(it->second);
@@ -22,6 +35,15 @@ const sf::Texture& AssetLoader::GetTexture(const std::string& name,
   _textureByName.insert(std::make_pair(name, std::move(texture)));
 
   return *(_textureByName.find(name)->second);
+}
+
+bool AssetLoader::TryGetLevelData(int levelIndex, LevelData& levelData) const {
+  if (auto it = _levelDataByIndex.find(levelIndex);
+      it != _levelDataByIndex.end()) {
+    levelData = it->second;
+    return true;
+  }
+  return false;
 }
 
 std::unique_ptr<sf::Font> AssetLoader::LoadFont(const std::string& name) {

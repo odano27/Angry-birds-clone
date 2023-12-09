@@ -24,7 +24,7 @@ MainMenu::MainMenu(IUIManager& manager) : UIScreen({0.0f, 0.0f}, manager) {
           .Build());
 
   // Buttons
-  const int buttonsCount = 3;
+  const int buttonsCount = AssetLoader::LEVELS_COUNT;
   const double buttonW = 100.0;
   double buttonX = (windowSize.x - (buttonW * buttonsCount)) / 2;
   for (int i = 0; i < buttonsCount; i++) {

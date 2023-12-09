@@ -68,7 +68,7 @@ void Level::Draw(Renderer& renderer, double t) {
 
     GameEvent e;
     e.type = GameEvent::LevelCompleted;
-    e.levelCompleted.lastLevel = _levelIndex == 2;
+    e.levelCompleted.lastLevel = _levelIndex == AssetLoader::LEVELS_COUNT - 1;
     e.levelCompleted.levelFailed = !isWin;
     _eventBus.Publish(e);
   }
@@ -128,12 +128,9 @@ void Level::HandleInputEvent(const sf::Event& event) {
 
     sf::Vector2f limitedPosition = origin - dir;
 
-    _lastBirdIndex =
-        AddEntity(new Birds(
-            _selected, limitedPosition.x, limitedPosition.y, 
-            angle, limitedPosition.x > origin.x,
-            _renderer, _physics, _assets
-        ));
+    _lastBirdIndex = AddEntity(
+        new Birds(_selected, limitedPosition.x, limitedPosition.y, angle,
+                  limitedPosition.x > origin.x, _renderer, _physics, _assets));
 
     Birds& bird = static_cast<Birds&>(GetEntity(_lastBirdIndex));
     bird.Throw(dir.x, -dir.y, (len / Renderer::PPU) * SPEED_MULT);
@@ -154,7 +151,8 @@ void Level::HandleInputEvent(const sf::Event& event) {
     sf::Vector2f stretchVector = sf::Vector2f(mouseX, mouseY) - origin;
 
     float maxStretchDistance = 150.5f;
-    float currentStretchDistance = sqrt(stretchVector.x * stretchVector.x + stretchVector.y * stretchVector.y);
+    float currentStretchDistance = sqrt(stretchVector.x * stretchVector.x +
+                                        stretchVector.y * stretchVector.y);
 
     if (currentStretchDistance > maxStretchDistance) {
       stretchVector /= currentStretchDistance;
@@ -189,13 +187,28 @@ void Level::CreateLevel(int levelIndex) {
   _lastBirdIndex = -1;
   _amountByBird.clear();
 
-  CreateCommon();
-  if (levelIndex == 0)
-    CreateLevel1();
-  else if (levelIndex == 1)
-    CreateLevel2();
-  else if (levelIndex == 2)
-    CreateLevel3();
+  LevelData levelData;
+  if (_assets.TryGetLevelData(levelIndex, levelData)) {
+    _amountByBird = levelData.GetAmountByBird();
+
+    // Common entities
+    AddEntity(new SpriteEntity({0.0, 0.0}, "bg2", 1, _assets));
+
+    _slingshotIndex = AddEntity(new Slingshot({100.0, 210.0}, _assets));
+    AddEntity(new Ground(_renderer, _physics, _assets));
+
+    // Level entities
+    for (const LevelData::EnemyData& enemyData : levelData.GetEnemies()) {
+      AddEntity(new Enemy(enemyData.type, enemyData.position, _renderer,
+                          _physics, _assets));
+    }
+
+    for (const LevelData::ObstacleData& obstacleData :
+         levelData.GetObstacles()) {
+      AddEntity(new Obstacles(obstacleData.type, obstacleData.position,
+                              _renderer, _physics, _assets));
+    }
+  }
 
   _selected = _amountByBird.begin()->first;
 
@@ -221,70 +234,6 @@ const std::map<BirdType, int>& Level::GetAmountByBird() const {
 void Level::ClearLevel() {
   for (auto& entity : _entities) entity->DestroyBody(_physics);
   _entities.clear();
-}
-
-void Level::CreateCommon() {
-  AddEntity(new SpriteEntity({0.0, 0.0}, "bg2", 1, _assets));
-
-  _slingshotIndex = AddEntity(new Slingshot({100.0, 210.0}, _assets));
-  AddEntity(new Ground(_renderer, _physics, _assets));
-}
-
-// Level with 2 red birds, one enemy on a plank (picture in plan folder)
-void Level::CreateLevel1() {
-  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
-
-  AddEntity(
-      new Enemy(EnemyType::Pig, {590.0, 230.0}, _renderer, _physics, _assets));
-
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {600.0, 290.0}, _renderer,
-                          _physics, _assets));
-}
-
-// Level with 2 red and 2 yellow birds, 2 enemies, one inside plank house
-// (picture in plan folder)
-void Level::CreateLevel2() {
-  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
-  _amountByBird.insert(std::make_pair(BirdType::Yellow, 2));
-
-  AddEntity(
-      new Enemy(EnemyType::Pig, {500.0, 340.0}, _renderer, _physics, _assets));
-  AddEntity(
-      new Enemy(EnemyType::Pig, {640.0, 340.0}, _renderer, _physics, _assets));
-
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {600.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {700.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_hor, {610.0, 255.0}, _renderer,
-                          _physics, _assets));
-}
-
-// Level with 2red, 2 yellow and 1 big red birds, 2 enemies, both inside plank
-// houses (picture in plan folder)
-void Level::CreateLevel3() {
-  _amountByBird.insert(std::make_pair(BirdType::Red, 2));
-  _amountByBird.insert(std::make_pair(BirdType::Yellow, 2));
-  _amountByBird.insert(std::make_pair(BirdType::Big_Red, 1));
-
-  AddEntity(
-      new Enemy(EnemyType::Pig, {440.0, 340.0}, _renderer, _physics, _assets));
-  AddEntity(
-      new Enemy(EnemyType::Pig, {640.0, 340.0}, _renderer, _physics, _assets));
-
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {400.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {500.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_hor, {410.0, 255.0}, _renderer,
-                          _physics, _assets));
-
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {600.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_ver, {700.0, 290.0}, _renderer,
-                          _physics, _assets));
-  AddEntity(new Obstacles(ObstacleType::Plank_hor, {610.0, 255.0}, _renderer,
-                          _physics, _assets));
 }
 
 void Level::UpdateHUD() {
