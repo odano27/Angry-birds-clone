@@ -236,7 +236,7 @@ void Level::ClearLevel() {
   _entities.clear();
 }
 
-void Level::UpdateHUD() {
+void Level::UpdateHUD() const {
   GameEvent e;
   e.type = GameEvent::LevelUpdated;
   e.levelUpdated.index = _levelIndex;
@@ -247,7 +247,7 @@ void Level::UpdateHUD() {
   _eventBus.Publish(e);
 }
 
-int Level::GetAngle(int mouseX, int mouseY, sf::Vector2f origin) {
+int Level::GetAngle(int mouseX, int mouseY, sf::Vector2f origin) const {
   int angle = std::atan2(mouseY - origin.y, mouseX - origin.x) * (180 / b2_pi);
   if (angle < -90)
     angle += 180;
@@ -268,4 +268,4 @@ void Level::RemoveEntity(int index) {
   _entities.erase(_entities.begin() + index);
 }
 
-Entities& Level::GetEntity(int index) { return *_entities.at(index); }
+Entities& Level::GetEntity(int index) const { return *_entities.at(index); }

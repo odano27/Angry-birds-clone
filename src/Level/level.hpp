@@ -47,12 +47,12 @@ class Level : public IInputEventHandler, public IGameEventHandler {
 
   void ClearLevel();
 
-  void UpdateHUD();
-  int GetAngle(int mouseX, int mouseY, sf::Vector2f origin);
+  void UpdateHUD() const;
+  int GetAngle(int mouseX, int mouseY, sf::Vector2f origin) const;
 
   int AddEntity(Entities*&& entity);
   void RemoveEntity(int index);
-  Entities& GetEntity(int index);
+  Entities& GetEntity(int index) const;
 };
 
 #endif  // _LEVEL_HPP_

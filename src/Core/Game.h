@@ -11,7 +11,6 @@
 class Game : public IGameEventHandler {
  public:
   Game(sf::RenderWindow& window);
-  ~Game();
 
   void RunLoop();
 
@@ -20,11 +19,14 @@ class Game : public IGameEventHandler {
  private:
   sf::RenderWindow& _window;
 
-  Input* _input;
-  Physics* _physics;
-  Renderer* _renderer;
-  Level* _level;
-  UIManager* _uiManager;
-  AssetLoader* _assets;
-  GameEventBus* _eventBus;
-};
+  AssetLoader _assets;
+  Renderer _renderer;
+  Physics _physics;
+  GameEventBus _eventBus;
+  UIManager _uiManager;
+  Input _input;
+
+  std::unique_ptr<Level> _level;
+}
+
+;

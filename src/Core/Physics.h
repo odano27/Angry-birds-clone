@@ -18,7 +18,8 @@ class Physics {
   void DestroyBody(b2Body* body);
 
  private:
-  std::unique_ptr<b2World> _world;
   DebugDraw _debugDraw;
   ContactListener _contactListener;
+
+  std::unique_ptr<b2World> _world;
 };
