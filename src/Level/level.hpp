@@ -27,6 +27,8 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   int GetEnemiesTotal() const;
   const std::map<BirdType, int>& GetAmountByBird() const;
 
+  void Update(double deltaTime);
+
  private:
   Renderer& _renderer;
   Physics& _physics;

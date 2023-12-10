@@ -269,3 +269,12 @@ void Level::RemoveEntity(int index) {
 }
 
 Entities& Level::GetEntity(int index) const { return *_entities.at(index); }
+
+void Level::Update(double deltaTime) {
+  for (auto& entity : _entities) {
+    if (entity->IsBird()) {
+      Birds* bird = dynamic_cast<Birds*>(entity.get());
+      bird->Update(deltaTime);
+    }
+  }
+}

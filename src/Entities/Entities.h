@@ -31,7 +31,7 @@ class Entities {
   virtual bool isEnemy() const {
     return false;
   }  // Default false for entities, enemy overrides to yes.
-
+  
   bool IsDestroyed() const;
   bool CanCollide() const;
   b2Body* GetBody() const;
@@ -44,6 +44,7 @@ class Entities {
 
   int _initAngle;
 
+  bool _isDestroyed;
  private:
   std::string _name;
 
@@ -52,8 +53,6 @@ class Entities {
 
   Vector2 _position;
   Vector2 _prevPosition;
-
-  bool _isDestroyed;
 };
 
 #endif  // _ENTITIES_H_

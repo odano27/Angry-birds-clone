@@ -30,9 +30,14 @@ class Birds : public Entities {
   static const std::string GetTextureName(BirdType type);
   static double GetRadius(BirdType type);
 
+  void Update(float deltaTime);
+  bool HasStoppedMoving() const;
+
  private:
   BirdType _type;
   bool _canUseAbility;
+
+  float _timer;
 };
 
 #endif  // BIRDS_H

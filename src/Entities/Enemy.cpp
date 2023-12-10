@@ -36,6 +36,8 @@ Enemy::Enemy(EnemyType type, const Vector2& screenPos, Renderer& renderer,
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
   bodyDef.position.Set(worldPos.x, worldPos.y);
+  bodyDef.angularDamping = 0.5f;
+  bodyDef.linearDamping = 0.5f;
 
   b2CircleShape shape;
   shape.m_radius = radius / Renderer::PPU;

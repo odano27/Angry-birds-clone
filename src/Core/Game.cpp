@@ -55,6 +55,10 @@ void Game::RunLoop() {
       accumulated -= fixedDeltaTime;
     }
 
+    if (_level != nullptr) {
+      _level->Update(elapsed);
+    }
+
     // Rendering
     {
       double t = accumulated / fixedDeltaTime;

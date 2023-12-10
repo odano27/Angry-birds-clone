@@ -7,6 +7,8 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
              Renderer& renderer, Physics& physics, AssetLoader& assets)
     : Entities("Bird"), _type(type), _canUseAbility(true) {
   _initAngle = angle;
+  _timer = 0.0f;
+
 
   switch (type) {
     case BirdType::Red:
@@ -32,6 +34,8 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
   b2BodyDef bodyDef;
   bodyDef.type = b2_dynamicBody;
   bodyDef.position.Set(worldPos.x, worldPos.y);
+  bodyDef.angularDamping = 0.5f;
+  bodyDef.linearDamping = 0.5f;
 
   b2CircleShape shape;
   shape.m_radius = radius / Renderer::PPU;
@@ -123,4 +127,31 @@ double Birds::GetRadius(BirdType type) {
     case BirdType::Big_Red:
       return 50.0;
   }
+}
+
+void Birds::Update(float deltaTime) {
+  if (this->HasStoppedMoving()) {
+    _timer += deltaTime;
+    if (_timer >= 1.0f) {
+      this->_isDestroyed = true;
+    }
+  } else {
+    _timer = 0.0f;
+  }
+}
+
+bool Birds::HasStoppedMoving() const {
+  const b2Body* body = this->GetBody();
+
+    if (body) {
+        float linearThreshold = 0.1f;
+        float angularThreshold = 0.1f;
+        float angularVelocity = body->GetAngularVelocity();
+
+        float linearVelocity = body->GetLinearVelocity().Length();
+
+        return (linearVelocity < linearThreshold) &&
+               (std::abs(angularVelocity) < angularThreshold);
+    }
+    return false;
 }
