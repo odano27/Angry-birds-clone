@@ -17,18 +17,18 @@ int Score::BirdUnused(std::pair<BirdType, int> birdPair) {
 
     switch (birdPair.first) {
         case BirdType::Red:
-            scorePerBird = POINTS_FOR_RED_BIRD;
+            scorePerBird += POINTS_FOR_RED_BIRD * birdPair.second;
             break;
         case BirdType::Yellow:
-            scorePerBird = POINTS_FOR_YELLOW_BIRD;
+            scorePerBird += POINTS_FOR_YELLOW_BIRD * birdPair.second;
             break;
         case BirdType::Big_Red:
-            scorePerBird = POINTS_FOR_BIG_BIRD;
+            scorePerBird += POINTS_FOR_BIG_BIRD * birdPair.second;
             break;
         default:
-            scorePerBird = DEFAULT_POINTS_PER_BIRD;
+            scorePerBird += DEFAULT_POINTS_PER_BIRD * birdPair.second;
             break;
     }
 
-    return scorePerBird * birdPair.second;
+    return scorePerBird;
 }
