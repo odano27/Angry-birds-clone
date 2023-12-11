@@ -14,6 +14,11 @@ Entities::Entities(const std::string& name) : _name(name) {
   _hitPoints = 999999999;
   _damage = 0;
   _isDestroyed = false;
+  _soundBuffer[0].loadFromFile("src/Assets/Sounds/Oink.wav");
+  _soundBuffer[1].loadFromFile("src/Assets/Sounds/Wood_destroyed.wav");
+  _Sounds[0].setBuffer(_soundBuffer[0]);
+  _Sounds[1].setBuffer(_soundBuffer[1]);
+
 }
 
 void Entities::SetBody(b2Body* body) {
@@ -100,8 +105,14 @@ void Entities::Draw(Renderer& renderer, double t) {
 }
 
 void Entities::CollideWith(Entities* other) {
+  if (this->isEnemy()) {
+    _Sounds[0].play();
+  }
   _hitPoints -= other->GetDamage();
   if (_hitPoints <= 0) {
+    if (!this->isEnemy() && !this ->IsBird()) {
+      _Sounds[1].play();
+    }
     _isDestroyed = true;
   }
 }

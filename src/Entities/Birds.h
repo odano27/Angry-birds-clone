@@ -37,8 +37,8 @@ class Birds : public Entities {
  private:
   BirdType _type;
   bool _canUseAbility;	
-  // sf::SoundBuffer _soundBuffer[2];
-	// sf::Sound _Sounds[2];
+  sf::SoundBuffer _soundBuffer[2];
+	sf::Sound _Sounds[2];
 
   float _timer;
 };

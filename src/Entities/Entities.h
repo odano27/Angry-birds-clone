@@ -4,6 +4,7 @@
 #include <b2_body.h>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 
 #include "Physics.h"
@@ -47,6 +48,8 @@ class Entities {
   bool _isDestroyed;
  private:
   std::string _name;
+  sf::SoundBuffer _soundBuffer[4];
+	sf::Sound _Sounds[4];
 
   b2Body* _body;
   std::unique_ptr<sf::Shape> _shape;

@@ -31,6 +31,15 @@ Game::Game(sf::RenderWindow& window)
 }
 
 void Game::RunLoop() {
+  _soundBuffer[0].loadFromFile("src/Assets/Sounds/Level_complete.wav");
+  _soundBuffer[1].loadFromFile("src/Assets/Sounds/Level_failed.wav");
+  _soundBuffer[2].loadFromFile("src/Assets/Sounds/Theme.wav");
+  _Sounds[0].setBuffer(_soundBuffer[0]);
+  _Sounds[1].setBuffer(_soundBuffer[1]);
+  _Sounds[2].setBuffer(_soundBuffer[2]);
+  _Sounds[2].setLoop(true);
+  _Sounds[2].setVolume(20);
+  _Sounds[2].play();
   double fixedDeltaTime = 1.0 / 50;
   double maxDeltaTime = 1.0 / 3.0;
 
@@ -96,6 +105,7 @@ void Game::HandleGameEvent(const GameEvent& event) {
     CompletedMenu::Data data{event.levelCompleted.lastLevel,
                              event.levelCompleted.levelFailed,
                              levelScore};
+    data.levelFailed ? _Sounds[1].play() : _Sounds[0].play();
     _uiManager.Show(UIScreenType::CompletedMenu, &data);
   } else if (event.type == GameEvent::NextLevel) {
     _level->NextLevel();

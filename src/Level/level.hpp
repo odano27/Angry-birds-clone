@@ -60,6 +60,9 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   int AddEntity(Entities*&& entity);
   void RemoveEntity(int index);
   Entities& GetEntity(int index) const;
+  sf::SoundBuffer _soundBuffer[4];
+  sf::Sound _Sounds[4];
+  
 };
 
 #endif  // _LEVEL_HPP_

@@ -23,6 +23,14 @@ Level::Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
   _levelScore = 0;
 
   _eventBus.AddEventHandler(GameEvent::BirdSelected, this);
+  _soundBuffer[0].loadFromFile("src/Assets/Sounds/Pig_destroyed.wav");
+  _soundBuffer[1].loadFromFile("src/Assets/Sounds/Wood_destroyed.wav");
+  _Sounds[0].setBuffer(_soundBuffer[0]);
+  _Sounds[1].setBuffer(_soundBuffer[1]);
+  _soundBuffer[2].loadFromFile("src/Assets/Sounds/Level_complete.wav");
+  _soundBuffer[3].loadFromFile("src/Assets/Sounds/Level_failed.wav");
+  _Sounds[2].setBuffer(_soundBuffer[2]);
+  _Sounds[3].setBuffer(_soundBuffer[3]);
 }
 
 Level::~Level() {
@@ -41,6 +49,7 @@ void Level::Draw(Renderer& renderer, double t) {
       entity->DestroyBody(_physics);
 
       if (entity->isEnemy()) {
+        _Sounds[0].play();
         _levelScore += _score.EnemyDestroyed();
         _enemiesDestroyed++;
         it = _entities.erase(it);
@@ -51,6 +60,7 @@ void Level::Draw(Renderer& renderer, double t) {
     } else if (entity->IsBird()) {
       allBirdsDestroyed = false;
     }
+
 
     it++;
   }

@@ -34,6 +34,9 @@ if (SFML_FOUND)
     target_link_libraries(${EXECUTABLE_NAME} sfml-audio sfml-graphics sfml-window sfml-system)
 endif()
 
+find_library(FLAC_LIBRARY NAMES FLAC PATHS "/libs/FLAC" REQUIRED)
+target_link_libraries(${EXECUTABLE_NAME} ${FLAC_LIBRARY})
+
 # Get a lot of warnings and make all warnings into errors
 if(MSVC)
     target_compile_options(${EXECUTABLE_NAME} PRIVATE /Wall /WX)
