@@ -3,6 +3,7 @@
 
 #include "AssetLoader.h"
 #include "Entities.h"
+#include "SFML/Audio.hpp"
 
 enum class BirdType {
   Red,
@@ -35,7 +36,9 @@ class Birds : public Entities {
 
  private:
   BirdType _type;
-  bool _canUseAbility;
+  bool _canUseAbility;	
+  // sf::SoundBuffer _soundBuffer[2];
+	// sf::Sound _Sounds[2];
 
   float _timer;
 };
