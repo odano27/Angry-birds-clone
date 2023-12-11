@@ -28,8 +28,8 @@ CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
   // Display score
   if (!_data.levelFailed) {
     _root->AddChild(UITextBuilder(Vector2{hWidth, 450.0},
-                                "Score: " + std::to_string(_data.score), font, 40) // Use std::to_string to convert the score to a string
-                      .WithColor(sf::Color::White) // Customize the text color
+                                "Score: " + std::to_string(_data.score), font, 40)
+                      .WithColor(sf::Color::White)
                       .WithOutline()
                       .WithOriginAtCenter()
                       .Build());

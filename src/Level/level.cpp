@@ -78,11 +78,9 @@ void Level::Draw(Renderer& renderer, double t) {
 
   if (!_levelCompleted && (isWin || isFail)) {
     _levelCompleted = true;
-
     for (auto& pair : _amountByBird) {
-      _levelScore += _score.BirdUnused(pair.second);
+      _levelScore += _score.BirdUnused(pair);
     }
-
     GameEvent e;
     e.type = GameEvent::LevelCompleted;
     e.levelCompleted.lastLevel = _levelIndex == AssetLoader::LEVELS_COUNT - 1;
