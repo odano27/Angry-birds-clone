@@ -7,6 +7,7 @@
 #include "GameEvent.h"
 #include "Input.h"
 #include "leveldata.hpp"
+#include "Score.h"
 
 class Level : public IInputEventHandler, public IGameEventHandler {
  public:
@@ -28,11 +29,13 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   const std::map<BirdType, int>& GetAmountByBird() const;
 
   void Update(double deltaTime);
+  int GetLevelScore() const;
 
  private:
   Renderer& _renderer;
   Physics& _physics;
   GameEventBus& _eventBus;
+  Score _score;    
   AssetLoader& _assets;
 
   std::vector<std::unique_ptr<Entities>> _entities;
@@ -44,6 +47,8 @@ class Level : public IInputEventHandler, public IGameEventHandler {
   int _levelIndex;
   int _enemiesTotal;
   int _enemiesDestroyed;
+  int _levelScore;
+
   std::map<BirdType, int> _amountByBird;
   BirdType _selected;
 

@@ -25,6 +25,15 @@ CompletedMenu::CompletedMenu(IUIManager& manager, Data* data)
   bool isGameWin = _data.lastLevel && !_data.levelFailed;
   sf::Color textColor = _data.levelFailed ? UIText::RED : UIText::GREEN;
   // Title
+  // Display score
+  if (!_data.levelFailed) {
+    _root->AddChild(UITextBuilder(Vector2{hWidth, 450.0},
+                                "Score: " + std::to_string(_data.score), font, 40) // Use std::to_string to convert the score to a string
+                      .WithColor(sf::Color::White) // Customize the text color
+                      .WithOutline()
+                      .WithOriginAtCenter()
+                      .Build());
+  }
   _root->AddChild(UITextBuilder(Vector2{hWidth, 150.0},
                                 isGameWin ? "Game" : "Level", font, 80)
                       .WithColor(textColor)

@@ -13,12 +13,14 @@ Level::Level(Renderer& renderer, Physics& physics, GameEventBus& eventBus,
     : _renderer(renderer),
       _physics(physics),
       _eventBus(eventBus),
+      _score(),
       _assets(assets) {
   _slingshotIndex = -1;
   _previewIndex = -1;
   _lastBirdIndex = -1;
   _enemiesTotal = _enemiesDestroyed = 0;
   _levelCompleted = false;
+  _levelScore = 0;
 
   _eventBus.AddEventHandler(GameEvent::BirdSelected, this);
 }
@@ -39,6 +41,7 @@ void Level::Draw(Renderer& renderer, double t) {
       entity->DestroyBody(_physics);
 
       if (entity->isEnemy()) {
+        _levelScore += _score.EnemyDestroyed();
         _enemiesDestroyed++;
         it = _entities.erase(it);
 
@@ -57,7 +60,7 @@ void Level::Draw(Renderer& renderer, double t) {
     if (pair.second > 0) {
       noBirdsLeft = false;
       break;
-    }
+    } 
   }
 
   bool isWin = _enemiesDestroyed >= _enemiesTotal;
@@ -65,6 +68,10 @@ void Level::Draw(Renderer& renderer, double t) {
 
   if (!_levelCompleted && (isWin || isFail)) {
     _levelCompleted = true;
+
+    for (auto& pair : _amountByBird) {
+      _levelScore += _score.BirdUnused(pair.second);
+    }
 
     GameEvent e;
     e.type = GameEvent::LevelCompleted;
@@ -277,4 +284,8 @@ void Level::Update(double deltaTime) {
       bird->Update(deltaTime);
     }
   }
+}
+
+int Level::GetLevelScore() const {
+  return _levelScore;
 }
