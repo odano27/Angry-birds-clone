@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://eu-central.storage.cloudconvert.com/tasks/a64dc0b9-1aaa-460b-8457-cff77ca295c4/Fly.wav?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20231211%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20231211T152124Z&X-Amz-Expires=86400&X-Amz-Signature=72e9474f8d519b60153ae58c2de8f0bb604bb5ee34fd6e272cf98958267501cc&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22Fly.wav%22&response-content-type=audio%2Fwav&x-id=GetObject

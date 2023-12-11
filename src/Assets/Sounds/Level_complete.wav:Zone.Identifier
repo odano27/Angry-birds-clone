@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://eu-central.storage.cloudconvert.com/tasks/d4a7c473-e983-4894-b2a6-59d1c0f52d51/Level_complete.wav?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20231211%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20231211T152124Z&X-Amz-Expires=86400&X-Amz-Signature=90a7170348cfb95470d5adc96d6c4ee569d37d4e7f55e57d55420ac80fb417fc&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22Level_complete.wav%22&response-content-type=audio%2Fwav&x-id=GetObject
