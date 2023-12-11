@@ -70,7 +70,7 @@ void Level::Draw(Renderer& renderer, double t) {
     _levelCompleted = true;
 
     for (auto& pair : _amountByBird) {
-      _levelScore += _score.BirdUnused(pair.second);
+      _levelScore += _score.BirdUnused(pair);
     }
 
     GameEvent e;
