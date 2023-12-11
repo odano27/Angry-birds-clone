@@ -25,8 +25,6 @@ class Game : public IGameEventHandler {
   GameEventBus _eventBus;
   UIManager _uiManager;
   Input _input;
-  sf::SoundBuffer _soundBuffer[3];
-	sf::Sound _Sounds[3];
 
   std::unique_ptr<Level> _level;
 }

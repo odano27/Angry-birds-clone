@@ -54,10 +54,10 @@ Birds::Birds(BirdType type, int mouseX, int mouseY, int angle, bool flip,
   const sf::Texture& texture = assets.GetTexture(GetTextureName(type));
   sf::Vector2u textureSize = texture.getSize();
   SetTexture(texture, {d / textureSize.x * (flip ? -1 : 1), d / textureSize.y});
-  _soundBuffer[0].loadFromFile("src/Assets/Sounds/Shoot.wav");
-  _soundBuffer[1].loadFromFile("src/Assets/Sounds/Fly.wav");
-  _Sounds[0].setBuffer(_soundBuffer[0]);
-  _Sounds[1].setBuffer(_soundBuffer[1]);
+  // _soundBuffer[0].loadFromFile("Assets/Sounds/Shoot.wav");
+  // _soundBuffer[1].loadFromFile("Assets/Sounds/Fly.wav");
+  // _Sounds[0].setBuffer(_soundBuffer[0]);
+  // _Sounds[1].setBuffer(_soundBuffer[1]);
 }
 
 void Birds::CollideWith(Entities* other) {
@@ -73,7 +73,8 @@ void Birds::Throw(float x, float y, float n) {
   b2Vec2 impulse = body->GetMass() * n * direction;
   body->ApplyLinearImpulseToCenter(impulse, true);
   body->SetAngularVelocity(-n / 25.0f);
-  _Sounds[1].play();
+  // _Sounds[0].play();
+  // _Sounds[1].play();
 }
 
 void Birds::UseAbility(Vector2 mouseLocation) {
@@ -150,7 +151,7 @@ bool Birds::HasStoppedMoving() const {
 
     if (body) {
         float linearThreshold = 0.1f;
-        float angularThreshold = 0.2f;
+        float angularThreshold = 0.1f;
         float angularVelocity = body->GetAngularVelocity();
 
         float linearVelocity = body->GetLinearVelocity().Length();
