@@ -92,8 +92,10 @@ void Game::HandleGameEvent(const GameEvent& event) {
   } else if (event.type == GameEvent::RestartLevel) {
     _level->RestartLevel();
   } else if (event.type == GameEvent::LevelCompleted) {
+    int levelScore = _level->GetLevelScore();
     CompletedMenu::Data data{event.levelCompleted.lastLevel,
-                             event.levelCompleted.levelFailed};
+                             event.levelCompleted.levelFailed,
+                             levelScore};
     _uiManager.Show(UIScreenType::CompletedMenu, &data);
   } else if (event.type == GameEvent::NextLevel) {
     _level->NextLevel();

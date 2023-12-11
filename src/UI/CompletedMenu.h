@@ -7,6 +7,7 @@ class CompletedMenu : public UIScreen {
   struct Data {
     bool lastLevel;
     bool levelFailed;
+    int score;
   };
 
   CompletedMenu(IUIManager& manager, Data* data);
